@@ -1,36 +1,40 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes, Sequelize } = require("sequelize");
+const sequelize = require("../config/database");
 
-const Recipe = sequelize.define('Recipe', {
-  RecipeId: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+class Recipe extends Sequelize.Model {}
+
+Recipe.init(
+  {
+    RecipeId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Ingredients: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    Instructions: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    CookTime: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  Name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  Instructions: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  Ingredients: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  ImageUrl: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  Calories: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  CookTime: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-});
+  {
+    sequelize,
+    modelName: "Recipe",
+    tableName: "Recipes",
+    timestamps: false,
+    createdAt: false,
+    updatedAt: false
+  }
+);
 
 module.exports = Recipe;

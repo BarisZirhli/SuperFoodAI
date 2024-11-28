@@ -1,12 +1,11 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { sequelize } = require('../config/database');
+const User = require('./User');
+const Recipe = require('./Recipe');
+const Rating = require('./Rating');
+const FavoriteRecipe = require('./FavouriteRecipe');
+const AIModel = require('./AiModel');
 
-const User = require('./User')(sequelize, DataTypes);
-const Recipe = require('./Recipe')(sequelize, DataTypes);
-const Rating = require('./Rating')(sequelize, DataTypes);
-const FavoriteRecipe = require('./FavouriteRecipe')(sequelize, DataTypes);
-const AIModel = require('./AiModel')(sequelize, DataTypes);
-
+// Define associations
 User.hasMany(Rating, { foreignKey: 'UserId' });
 Rating.belongsTo(User, { foreignKey: 'UserId' });
 
