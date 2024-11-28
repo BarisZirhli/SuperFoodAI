@@ -11,23 +11,23 @@ const Recipe = sequelize.define('Recipe', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Description: {
-    type: DataTypes.TEXT,
+  Instructions: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
   Ingredients: {
-    type: DataTypes.JSON,
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  Steps: {
-    type: DataTypes.JSON,
+  ImageUrl: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
   Calories: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  PreparationTime: {
+  CookTime: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },

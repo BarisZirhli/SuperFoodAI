@@ -11,14 +11,6 @@ const AiModel = sequelize.define('AiModel', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Version: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  LastUpdated: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
 });
 
 module.exports = AiModel;

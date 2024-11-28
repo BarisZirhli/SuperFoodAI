@@ -7,9 +7,13 @@ const FavoriteRecipe = sequelize.define('FavoriteRecipe', {
     primaryKey: true,
     autoIncrement: true,
   },
-  CreatedDate: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  UserId: {
+    type: DataTypes.INTEGER,
+    allowNull:false
+  },
+  RecipeId: {
+    type: DataTypes.INTEGER,
+    allowNull:false
   },
 });
 

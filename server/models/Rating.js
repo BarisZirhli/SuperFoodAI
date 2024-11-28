@@ -7,18 +7,18 @@ const Rating = sequelize.define('Rating', {
     primaryKey: true,
     autoIncrement: true,
   },
-  Comment: {
-    type: DataTypes.TEXT,
-    allowNull: true,
+  UserId: {
+    type: DataTypes.INTEGER,
+    allowNull : false
+  },
+  RecipeId: {
+    type: DataTypes.INTEGER,
+    allowNull:false
   },
   Rating: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DOUBLE,
     allowNull: false,
-  },
-  CreatedDate: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
+  }
 });
 
 module.exports = Rating;

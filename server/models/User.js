@@ -11,6 +11,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  Surname: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   Email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,14 +24,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Preferences: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  CreatedDate: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
+
 });
 
 module.exports = User;
