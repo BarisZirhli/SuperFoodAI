@@ -1,7 +1,9 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const sequelize = require('../config/database');
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-class AiModel extends Sequelize.Model {}
+class AiModel extends Model {
+  static associate(models) {}
+}
 
 AiModel.init(
   {
@@ -16,13 +18,10 @@ AiModel.init(
     },
   },
   {
-    sequelize,            
-    modelName: 'AiModel', 
-    tableName: 'AiModels', 
-    timestamps: false,    
-
-    createdAt: false,
-    updatedAt: false
+    sequelize,
+    modelName: "AiModel",
+    tableName: "AiModels",
+    timestamps: false,
   }
 );
 

@@ -5,13 +5,11 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const sequelize = require('./config/database')
 
-// API routes
 var recipeRoutes = require("./routes/recipeRoutes.js");
 var favouriteRecipeRoutes = require("./routes/favouriteRecipeRoutes");
 
 var app = express();
 
-// Middleware
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

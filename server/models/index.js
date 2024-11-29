@@ -1,21 +1,50 @@
-const { sequelize } = require('../config/database');
-const User = require('./User');
-const Recipe = require('./Recipe');
-const Rating = require('./Rating');
-const FavoriteRecipe = require('./FavouriteRecipe');
-const AIModel = require('./AiModel');
+"use strict";
 
-// Define associations
-User.hasMany(Rating, { foreignKey: 'UserId' });
-Rating.belongsTo(User, { foreignKey: 'UserId' });
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const process = require("process");
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.js")[env];
+const db = {};
 
-Recipe.hasMany(Rating, { foreignKey: 'RecipeId' });
-Rating.belongsTo(Recipe, { foreignKey: 'RecipeId' });
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
 
-User.hasMany(FavoriteRecipe, { foreignKey: 'UserId' });
-FavoriteRecipe.belongsTo(User, { foreignKey: 'UserId' });
+fs.readdirSync(__dirname)
+  .filter((file) => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js" &&
+      file.indexOf(".test.js") === -1
+    );
+  })
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+    db[model.name] = model;
+  });
 
-Recipe.hasMany(FavoriteRecipe, { foreignKey: 'RecipeId' });
-FavoriteRecipe.belongsTo(Recipe, { foreignKey: 'RecipeId' });
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-module.exports = { sequelize, User, Recipe, Rating, FavoriteRecipe, AIModel };
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
