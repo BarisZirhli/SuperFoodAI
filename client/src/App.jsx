@@ -1,14 +1,23 @@
-import { useState } from "react";
-import "./App.css";
+import React from "react";
+import RecipeList from "./components/RecipeList";
+import Header from './components/Header'
+import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0);
+const recipes = [
+  {
+    title: "Chocolate Cake",
+    description: "A delicious chocolate cake recipe with rich flavor.",
+    image: "https://via.placeholder.com/300x200",
+  },
+];
 
+const App = () => {
   return (
-    <>
-      <div>SuperFoodAI</div>
-    </>
+    <div>
+      <Header/>
+      <RecipeList recipes={recipes} />
+    </div>
   );
-}
+};
 
 export default App;
