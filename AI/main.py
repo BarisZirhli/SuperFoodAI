@@ -1,90 +1,96 @@
-from fastapi import FastAPI, Query
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from typing import List
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-<<<<<<< HEAD
-# Initialize the FastAPI application
 app = FastAPI()
 
-# CORS settings: Allows requests from the React frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # React frontend URL can be specified here
-=======
-# FastAPI uygulamasını başlat
-app = FastAPI()
-
-# CORS ayarları: React frontendinden istek yapılmasını sağlar
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # React frontend URL'si burada belirtilebilir
->>>>>>> 2560b4e (Updated ai module)
-    allow_methods=["GET", "POST"],
-    allow_headers=["*"],
-)
-
-<<<<<<< HEAD
-# Load the dataset
-df = pd.read_csv("recipes.csv").fillna("")
+# 1. Veri setini yükle ve hazırlık yap
+df = pd.read_csv('recipes.csv').fillna("")  # Boş değerleri doldur
 df['combined_text'] = df['Name'] + " " + df['Description'] + " " + df['Keywords']
 
-# TF-IDF vectorization
-=======
-# Veri setini yükle
-df = pd.read_csv("recipes.csv").fillna("")
-df['combined_text'] = df['Name'] + " " + df['Description'] + " " + df['Keywords']
-
-# TF-IDF vektörizasyonu
->>>>>>> 2560b4e (Updated ai module)
-vectorizer = TfidfVectorizer(stop_words="turkish")
+vectorizer = TfidfVectorizer(stop_words="english")
 tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
 
-@app.get("/search/")
-def search_recipes(query: str = Query(..., description="Search query")):
-    """
-<<<<<<< HEAD
-    Returns the most relevant recipes based on the user's search query.
-    """
-    # Vectorize the user query
-    query_vector = vectorizer.transform([query])
+# Favori tarifler için basit bir veri yapısı
+favorite_recipes = set()
 
-    # Calculate cosine similarity
+# 2. Input Modelleri
+class SearchRequest(BaseModel):
+    ingredients: str
+
+class ToggleFavoriteRequest(BaseModel):
+    recipeId: str
+
+
+@app.post("/search")
+def search_recipes(request: SearchRequest):
+    user_query = request.ingredients.strip()
+    if not user_query:
+        raise HTTPException(status_code=400, detail="Ingredients field cannot be empty!")
+
+    # Query'yi vektörleştir ve similarity hesapla
+    query_vector = vectorizer.transform([user_query])
     similarities = cosine_similarity(query_vector, tfidf_matrix)
-    df['similarity'] = similarities[0]
 
-    # Sort by the highest similarity score
+    # En yüksek eşleşen sonuçları hazırla
+    df['similarity'] = similarities[0]
     results = df.sort_values(by='similarity', ascending=False).head(5)
 
-    # Return the necessary columns in JSON format
-=======
-    Kullanıcının arama sorgusuna göre en alakalı yemekleri döner.
-    """
-    # Kullanıcı sorgusunu vektörleştir
-    query_vector = vectorizer.transform([query])
+    recipes = [
+        {
+            "id": str(row['id']),
+            "name": row['Name'],
+            "instructions": row['RecipeInstructions'],
+            "image_url": row['Images'],
+            "ingredients": row['RecipeIngredientParts'],
+            "calories": row['Calories']
+        }
+        for _, row in results.iterrows()
+    ]
+    return recipes
 
-    # Cosine benzerliğini hesapla
-    similarities = cosine_similarity(query_vector, tfidf_matrix)
-    df['similarity'] = similarities[0]
 
-    # En yüksek benzerlik skoruna göre sırala
-    results = df.sort_values(by='similarity', ascending=False).head(5)
+# 4. Favori tarifleri getir endpoint'i
+@app.get("/favorites")
+def get_favorite_recipes():
+    if not favorite_recipes:
+        return []
 
-    # Gerekli kolonları JSON formatında döndür
->>>>>>> 2560b4e (Updated ai module)
-    recipes = []
-    for _, row in results.iterrows():
-        recipes.append({
-            "name": row["Name"],
-            "instructions": row["Description"],
-            "image": row["Images"],
-            "ingredients": row["RecipeIng"],
-            "calories": row["Calories"]
+    # Favori tarif ID'lerini kullanarak tarif detaylarını getir
+    favorites = []
+    for recipe_id in favorite_recipes:
+        recipe = df.loc[df['id'] == int(recipe_id)].iloc[0]  # ID'ye göre satırı getir
+        favorites.append({
+            "id": str(recipe['id']),
+            "name": recipe['Name'],
+            "instructions": recipe['RecipeInstructions'],
+            "image_url": recipe['Images'],
+            "ingredients": recipe['RecipeIngredientParts'],
+            "calories": recipe['Calories']
         })
-<<<<<<< HEAD
-    return {"recipes": recipes}
-=======
-    return {"recipes": recipes}
->>>>>>> 2560b4e (Updated ai module)
+    return favorites
+
+
+# 5. Favori tarifleri ekle/çıkar endpoint'i
+@app.post("/favorites/toggle")
+def toggle_favorite_recipe(request: ToggleFavoriteRequest):
+    recipe_id = request.recipeId.strip()
+
+    if not recipe_id:
+        raise HTTPException(status_code=400, detail="Recipe ID cannot be empty!")
+
+    if recipe_id in favorite_recipes:
+        favorite_recipes.remove(recipe_id)
+        return {"message": "Recipe removed from favorites", "status": "removed"}
+    else:
+        favorite_recipes.add(recipe_id)
+        return {"message": "Recipe added to favorites", "status": "added"}
+
+
+# FastAPI test edebilmek için ana çalışma
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
