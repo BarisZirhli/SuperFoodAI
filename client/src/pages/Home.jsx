@@ -3,6 +3,7 @@ import Layout from '../components/layout/Layout';
 import SearchBar from '../components/search/SearchBar';
 import RecipeGrid from '../components/recipe/RecipeGrid';
 import { defaultRecipes } from '../utils/recipeData';
+import RecipeSearch from '../components/search/RecipeSearch';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
