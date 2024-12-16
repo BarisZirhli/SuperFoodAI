@@ -9,27 +9,26 @@ import {
 
 
 const SearchBar = () => {
-  const [query, setQuery] = useState(''); // Input value
-  const [results, setResults] = useState([]); // Search results
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
 
   const handleSearch = async () => {
     if (!query) {
-      return; // Do not proceed if the query is empty
+      return;
     }
 
     try {
-      // Pass the 'ingredients' as query parameters in the URL
       const response = await axios.get('http://127.0.0.1:8000/search', {
         params: {
           ingredients: query
-        } // Send the user input as a query parameter
+        },
       });
-
-      setResults(response.data); // Store the response data in state
+      setResults(response.data);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
   };
+
 
 
   return ( <
