@@ -3,24 +3,24 @@ import axios from 'axios';
 import { Search } from 'lucide-react';
 
 const SearchBar = () => {
-  const [query, setQuery] = useState(''); // Input value
-  const [results, setResults] = useState([]); // Search results
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
 
   const handleSearch = async () => {
     if (!query) {
-      return; // Do not proceed if the query is empty
+      return;
     }
-
+  
     try {
-      // Make the API call to search for recipes
       const response = await axios.get('http://127.0.0.1:8000/search', {
-        ingredients: query, // Send the user input as the ingredients
+        params: { ingredients: query },
       });
-      setResults(response.data); // Store the response data in state
+      setResults(response.data);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
   };
+  
 
   return (
     <div>

@@ -10,16 +10,15 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React uygulamanızın portu
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Tüm HTTP metotlarına izin ver
-    allow_headers=["*"],  # Tüm header'lara izin ver
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
 
 # 1. Veri setini yükle ve hazırlık yap
 df = pd.read_csv('recipes.csv').fillna("")  # Boş değerleri doldur
-df['combined_text'] = df['Name'] + " " + df['Description'] + " " + df['Keywords']
+df['combined_text'] = df['Name'] + " " + df['RecipeIngredientParts'] + " " + df['Keywords']
 
 vectorizer = TfidfVectorizer(stop_words="english")
 tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
@@ -32,7 +31,9 @@ class SearchRequest(BaseModel):
     ingredients: str
 
 class ToggleFavoriteRequest(BaseModel):
-    recipeId: str
+    recipeId: int
+
+from fastapi import Query
 
 @app.get("/search")
 def search_recipes(request: SearchRequest):
@@ -48,7 +49,7 @@ def search_recipes(request: SearchRequest):
 
     recipes = [
         {
-            "id": str(row['id']),
+            "id": str(row['RecipeId']),
             "name": row['Name'],
             "instructions": row['RecipeInstructions'],
             "image_url": row['Images'],
@@ -65,9 +66,9 @@ def get_favorite_recipes():
         return []
     favorites = []
     for recipe_id in favorite_recipes:
-        recipe = df.loc[df['id'] == int(recipe_id)].iloc[0]
+        recipe = df.loc[df['RecipeId'] == int(recipe_id)].iloc[0]
         favorites.append({
-            "id": str(recipe['id']),
+            "id": str(recipe['RecipeId']),
             "name": recipe['Name'],
             "instructions": recipe['RecipeInstructions'],
             "image_url": recipe['Images'],
