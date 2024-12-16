@@ -8,56 +8,70 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost:5173",  # Frontend (React) origin
+    "http://127.0.0.1:5173",  # Another common localhost address
+]
+
+# Add the CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React uygulamanızın portu
+    allow_origins=origins,  # Allows requests from the origins list
     allow_credentials=True,
-    allow_methods=["*"],  # Tüm HTTP metotlarına izin ver
-    allow_headers=["*"],  # Tüm header'lara izin ver
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
 )
 
-
-# 1. Veri setini yükle ve hazırlık yap
-df = pd.read_csv('recipes.csv').fillna("")  # Boş değerleri doldur
-df['combined_text'] = df['Name'] + " " + df['Description'] + " " + df['Keywords']
+df = pd.read_csv("recipes.csv").fillna("")  # Boş değerleri doldur
+df["combined_text"] = (
+    df["Name"] + " " + df["RecipeIngredientParts"] + " " + df["Keywords"]
+)
 
 vectorizer = TfidfVectorizer(stop_words="english")
-tfidf_matrix = vectorizer.fit_transform(df['combined_text'])
+tfidf_matrix = vectorizer.fit_transform(df["combined_text"])
 
-# Favori tarifler için basit bir veri yapısı
+
 favorite_recipes = set()
 
-# 2. Input Modelleri
+
 class SearchRequest(BaseModel):
     ingredients: str
+
 
 class ToggleFavoriteRequest(BaseModel):
     recipeId: str
 
-@app.get("/search")
-def search_recipes(request: SearchRequest):
-    user_query = request.ingredients.strip()
-    if not user_query:
-        raise HTTPException(status_code=400, detail="Ingredients field cannot be empty!")
 
+@app.get("/search")
+def search_recipes(ingredients: str):
+    if not ingredients:
+        raise HTTPException(
+            status_code=400, detail="Ingredients field cannot be empty!"
+        )
+
+    user_query = ingredients.strip()
+
+    # Simulate a vectorizer and matrix for the purpose of the example
     query_vector = vectorizer.transform([user_query])
     similarities = cosine_similarity(query_vector, tfidf_matrix)
 
-    df['similarity'] = similarities[0]
-    results = df.sort_values(by='similarity', ascending=False).head(5)
+    df["similarity"] = similarities[0]
+    results = df.sort_values(by="similarity", ascending=False).head(5)
 
     recipes = [
         {
-            "id": str(row['id']),
-            "name": row['Name'],
-            "instructions": row['RecipeInstructions'],
-            "image_url": row['Images'],
-            "ingredients": row['RecipeIngredientParts'],
-            "calories": row['Calories']
+            "name": row["Name"],
+            "instructions": row["RecipeInstructions"],
+            "image_url": row["Images"],
+            "ingredients": row["RecipeIngredientParts"],
+            "calories": row["Calories"],
         }
         for _, row in results.iterrows()
     ]
+
     return recipes
+
 
 @app.get("/favorites")
 def get_favorite_recipes():
@@ -65,16 +79,19 @@ def get_favorite_recipes():
         return []
     favorites = []
     for recipe_id in favorite_recipes:
-        recipe = df.loc[df['id'] == int(recipe_id)].iloc[0]
-        favorites.append({
-            "id": str(recipe['id']),
-            "name": recipe['Name'],
-            "instructions": recipe['RecipeInstructions'],
-            "image_url": recipe['Images'],
-            "ingredients": recipe['RecipeIngredientParts'],
-            "calories": recipe['Calories']
-        })
+        recipe = df.loc[df["id"] == int(recipe_id)].iloc[0]
+        favorites.append(
+            {
+                "id": str(recipe["id"]),
+                "name": recipe["Name"],
+                "instructions": recipe["RecipeInstructions"],
+                "image_url": recipe["Images"],
+                "ingredients": recipe["RecipeIngredientParts"],
+                "calories": recipe["Calories"],
+            }
+        )
     return favorites
+
 
 @app.post("/favorites/toggle")
 def toggle_favorite_recipe(request: ToggleFavoriteRequest):
@@ -90,6 +107,8 @@ def toggle_favorite_recipe(request: ToggleFavoriteRequest):
         favorite_recipes.add(recipe_id)
         return {"message": "Recipe added to favorites", "status": "added"}
 
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
+
+    uvicorn.run(app, host="local", port=8000, reload=True)
