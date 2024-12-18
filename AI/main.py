@@ -57,7 +57,7 @@ def search_recipes(ingredients: str):
     similarities = cosine_similarity(query_vector, tfidf_matrix)
 
     df["similarity"] = similarities[0]
-    results = df.sort_values(by="similarity", ascending=False).head(5)
+    results = df.sort_values(by="similarity", ascending=False).head(4)
 
     recipes = [
         {

@@ -1,0 +1,37 @@
+.searchContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Sayfanın altına yaslamak için */
+    align-items: center;
+    margin: 20px 0;
+    position: absolute;
+    bottom: 20px;
+    /* Alt taraftan 20px uzaklık */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Yatayda ortalamak için */
+    width: 100%;
+    /* Sayfa genişliğini kaplasın */
+}
+
+.searchInput {
+    width: 500px;
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    outline: none;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.status {
+    color: #888;
+    margin-top: 10px;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
