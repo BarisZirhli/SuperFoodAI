@@ -5,11 +5,13 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
+import Header from "./components/Header";
 import "./App";
 
 function App() {
   return (
     <div className="App">
+      <Header/>
       <Routes>
         <Route path="/" element={<RecipeList />}></Route>
         <Route path="/favorites" element={<Favorites />}></Route>

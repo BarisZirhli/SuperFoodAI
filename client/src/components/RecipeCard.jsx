@@ -14,19 +14,19 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
     .split(",")
     .map((item) => item.replace(/"/g, "").trim());
 
-    const instructionList = instructions
+  const instructionList = instructions
     .replace(/^C\s*\(/, "")
     .replace(/\)$/, "")
     .split(/",\s*"/)
     .map((step) => step.replace(/"/g, "").trim());
 
-    const imageUrls = image
+  const imageUrls = image
     .replace(/^c\(/, "")
     .replace(/\)$/, "")
     .split(/",\s*"/)
     .map((url) => url.replace(/"/g, "").trim());
 
-    const firstImage = imageUrls[0];
+  const firstImage = imageUrls[0];
 
   return (
     <div style={{ margin: "10px", perspective: "1000px" }}>

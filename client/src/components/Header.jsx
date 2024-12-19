@@ -1,15 +1,18 @@
 import React from 'react';
-import { Button, Navbar, Nav } from 'react-bootstrap';
+import { Button, Navbar, Nav, Container, Row } from 'react-bootstrap';
 
 function Header() {
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">SuperFoodAI</Navbar.Brand>
-      <Nav className="ml-auto">
-        <Button variant="outline-primary" className="mr-2" href='/'>Favorites</Button>
-        <Button variant="outline-primary">Signup</Button>
+    <Container>
+      <Row>
+    <Navbar className="justify-content-between fixed-top p-4 px-4">
+      <Navbar.Brand href="/" className='fs-3'>SuperFoodAI</Navbar.Brand>
+      <Nav>
+        <Button className="btn btn-success p-2 " href='/favorites'>Favorites</Button>
       </Nav>
     </Navbar>
+    </Row>
+    </Container>
   );
 }
 
