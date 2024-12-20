@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card } from "react-bootstrap";
+import "../css/RecipeCard.css";
 
 function RecipeCard({ title, calories, ingredients, instructions, image }) {
   const [flipped, setFlipped] = useState(false);
@@ -29,12 +30,12 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
   const firstImage = imageUrls[0];
 
   return (
-    <div style={{ margin: "10px", perspective: "1000px" }}>
+    <div style={{ perspective: "1000px" }}>
       <div
         onClick={handleCardClick}
         style={{
-          width: "18rem",
-          height: "25rem",
+          width: "20rem",
+          height: "30rem",
           borderRadius: "10px",
           cursor: "pointer",
           transformStyle: "preserve-3d",
@@ -48,10 +49,10 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             height: "100%",
             backfaceVisibility: "hidden",
             borderRadius: "10px",
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: "100%",
+            display: "grid",
+            gap: "60px",
+            marginLeft: "10px",
+            marginRight: "10px",
           }}
         >
           <Card.Img
@@ -81,18 +82,18 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             position: "absolute",
             top: "0",
             left: "0",
-            width: "100%",
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
-            padding: "10px",
           }}
         >
-          <Card.Body>
+          <Card.Body className="card-body">
             <Card.Title>Ingredients</Card.Title>
             <ul style={{ textAlign: "left" }}>
               {ingredientList.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
+                <li style={{ listStyleType: "none" }} key={index}>
+                  {ingredient}
+                </li>
               ))}
             </ul>
 
