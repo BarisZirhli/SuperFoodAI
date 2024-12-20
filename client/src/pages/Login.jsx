@@ -4,10 +4,8 @@ import { Form, Button, Alert } from "react-bootstrap";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
     email: "",
-    password: "",
+    password: ""
   });
 
   const [errors, setErrors] = useState({});

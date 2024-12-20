@@ -1,17 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const { FavouriteRecipe } = require("../models");
+const {
+  FavouriteRecipe
+} = require("../config");
 
 router.get("/:userId", async (req, res) => {
   try {
     const favouriteRecipes = await FavouriteRecipe.findAll({
-      where: { userId: req.params.userId },
+      where: {
+        userId: req.params.userId
+      },
     });
     res.json(favouriteRecipes);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error fetching favourite recipes", error });
+      .json({
+        message: "Error fetching favourite recipes",
+        error
+      });
   }
 });
 
@@ -20,7 +27,10 @@ router.post("/", async (req, res) => {
     const favouriteRecipe = await FavouriteRecipe.create(req.body);
     res.status(201).json(favouriteRecipe);
   } catch (error) {
-    res.status(500).json({ message: "Error adding favourite recipe", error });
+    res.status(500).json({
+      message: "Error adding favourite recipe",
+      error
+    });
   }
 });
 
@@ -37,11 +47,17 @@ router.delete("/:userId/:recipeId", async (req, res) => {
       await favouriteRecipe.destroy();
       res.status(204).send();
     } else {
-      res.status(404).json({ message: "Favourite recipe not found" });
+      res.status(404).json({
+        message: "Favourite recipe not found"
+      });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error removing favourite recipe", error });
+    res.status(500).json({
+      message: "Error removing favourite recipe",
+      error
+    });
   }
 });
 
 module.exports = router;
+// login/register  registerdaki form inputları FE->BE post  ->DB

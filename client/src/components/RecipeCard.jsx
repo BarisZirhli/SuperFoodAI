@@ -30,7 +30,11 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
   const firstImage = imageUrls[0];
 
   return (
-    <div style={{ perspective: "1000px" }}>
+    <div
+      style={{
+        perspective: "1000px"
+      }}
+    >
       <div
         onClick={handleCardClick}
         style={{
@@ -40,7 +44,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
           cursor: "pointer",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
         }}
       >
         <Card
@@ -52,7 +56,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             display: "grid",
             gap: "60px",
             marginLeft: "10px",
-            marginRight: "10px",
+            marginRight: "10px"
           }}
         >
           <Card.Img
@@ -62,18 +66,17 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             style={{
               height: "200px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0",
+              borderRadius: "10px 10px 0 0"
             }}
-          />
+          />{" "}
           <Card.Body>
-            <Card.Title>{title}</Card.Title>
+            <Card.Title> {title} </Card.Title>{" "}
             <Card.Text>
-              <strong>Calories: </strong>
-              {calories} kcal
-            </Card.Text>
-          </Card.Body>
+              <strong> Calories: </strong> {calories}
+              kcal{" "}
+            </Card.Text>{" "}
+          </Card.Body>{" "}
         </Card>
-
         <Card
           className="text-center"
           style={{
@@ -81,31 +84,46 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             backfaceVisibility: "hidden",
             position: "absolute",
             top: "0",
-            left: "0",
+
             transform: "rotateY(180deg)",
             borderRadius: "10px",
-            overflowY: "auto",
+            overflowY: "auto"
           }}
         >
           <Card.Body className="card-body">
-            <Card.Title>Ingredients</Card.Title>
-            <ul style={{ textAlign: "left" }}>
+            <Card.Title> Ingredients </Card.Title>{" "}
+            <ul
+              style={{
+                textAlign: "left"
+              }}
+            >
+              {" "}
               {ingredientList.map((ingredient, index) => (
-                <li style={{ listStyleType: "none" }} key={index}>
-                  {ingredient}
+                <li
+                  style={{
+                    listStyleType: "none"
+                  }}
+                  key={index}
+                >
+                  {" "}
+                  {ingredient}{" "}
                 </li>
-              ))}
+              ))}{" "}
             </ul>
-
-            <Card.Title>Instructions</Card.Title>
-            <ol style={{ textAlign: "left" }}>
+            <Card.Title> Instructions </Card.Title>{" "}
+            <ol
+              style={{
+                textAlign: "left"
+              }}
+            >
+              {" "}
               {instructionList.map((instruction, index) => (
-                <li key={index}>{instruction}</li>
-              ))}
-            </ol>
-          </Card.Body>
-        </Card>
-      </div>
+                <li key={index}> {instruction} </li>
+              ))}{" "}
+            </ol>{" "}
+          </Card.Body>{" "}
+        </Card>{" "}
+      </div>{" "}
     </div>
   );
 }
