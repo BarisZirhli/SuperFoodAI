@@ -1,10 +1,10 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes, Sequelize } = require("sequelize");
+const sequelize = require("../config/config.json").development;
 
 class User extends Sequelize.Model {
   static associate(models) {
-    User.hasMany(models.Rating, { foreignKey: 'UserId' });
-    User.hasMany(models.FavoriteRecipe, { foreignKey: 'UserId' });
+    User.hasMany(models.Rating, { foreignKey: "UserId" });
+    User.hasMany(models.FavoriteRecipe, { foreignKey: "UserId" });
   }
 }
 
@@ -13,49 +13,49 @@ User.init(
     UserId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     Name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     Surname: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     Email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: true
     },
     Password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     Height: {
       type: DataTypes.FLOAT,
-      allowNull: true,
+      allowNull: true
     },
     Weight: {
       type: DataTypes.FLOAT,
-      allowNull: true,
+      allowNull: true
     },
     Age: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: true
     },
     Gender: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
+      allowNull: true
+    }
   },
   {
     sequelize,
-    modelName: 'User',
-    tableName: 'Users',
+    modelName: "User",
+    tableName: "Users",
     timestamps: false,
     createdAt: false,
-    updatedAt: false,
+    updatedAt: false
   }
 );
 

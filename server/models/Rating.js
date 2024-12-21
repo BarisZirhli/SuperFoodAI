@@ -1,44 +1,27 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const sequelize = require('../config/database');  // Ensure the sequelize instance is correctly imported
-
-class Rating extends Sequelize.Model {
-  static associate(models) {
-    // Rating belongs to User (UserId ile ilişki kurar)
-    Rating.belongsTo(models.User, { foreignKey: 'UserId' });
-
-    // Rating belongs to Recipe (RecipeId ile ilişki kurar)
-    Rating.belongsTo(models.Recipe, { foreignKey: 'RecipeId' });
+"use strict";
+const { Model } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  class Rating extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
   }
-}
-
-Rating.init(
-  {
-    RatingId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  Rating.init(
+    {
+      RatingId: DataTypes.INTEGER,
+      UserId: DataTypes.INTEGER,
+      RecipeId: DataTypes.INTEGER,
+      Rating: DataTypes.DOUBLE
     },
-    UserId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    RecipeId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    Rating: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,           
-    modelName: 'Rating',  
-    tableName: 'Ratings', 
-    timestamps: false,  
-    createdAt: false,
-    updatedAt: false  
-  }
-);
-
-module.exports = Rating;
+    {
+      sequelize,
+      modelName: "Rating"
+    }
+  );
+  return Rating;
+};

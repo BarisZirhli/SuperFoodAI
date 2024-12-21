@@ -1,19 +1,19 @@
-const { Client } = require('pg');
+const { Client } = require("pg");
 
 const createDatabase = async () => {
   const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    password: '1234',
-    port: 5432,
+    user: "postgres",
+    host: "localhost",
+    password: "mitaka",
+    port: 5432
   });
 
   try {
     await client.connect();
     await client.query('CREATE DATABASE "SuperFoodDb";');
-    console.log('Database created successfully!');
+    console.log("Database created successfully!");
   } catch (error) {
-    console.error('Error creating database:', error);
+    console.error("Error creating database:", error);
   } finally {
     await client.end();
   }
