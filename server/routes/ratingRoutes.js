@@ -1,0 +1,2 @@
+// rating getirme 
+// rating ekleme

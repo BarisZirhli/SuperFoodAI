@@ -1,9 +1,22 @@
-const { Sequelize } = require("sequelize");
-const sequelize = new Sequelize(
-  `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
-  {
-    dialect: "postgres",
-    logging: false,
+const { Client } = require('pg');
+
+const createDatabase = async () => {
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1234',
+    port: 5432,
+  });
+
+  try {
+    await client.connect();
+    await client.query('CREATE DATABASE "SuperFoodDb";');
+    console.log('Database created successfully!');
+  } catch (error) {
+    console.error('Error creating database:', error);
+  } finally {
+    await client.end();
   }
-);
-module.exports = sequelize;
+};
+
+createDatabase();

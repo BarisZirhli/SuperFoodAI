@@ -61,3 +61,6 @@ router.delete("/:userId/:recipeId", async (req, res) => {
 
 module.exports = router;
 // login/register  registerdaki form inputları FE->BE post  ->DB
+
+// favori ekleme silme ve getirme yapar.
+// favori yemeklere göre frontende benzer yemekleri gönder, frontend de ai'a yollayacak.

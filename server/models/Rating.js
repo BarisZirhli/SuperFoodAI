@@ -1,11 +1,13 @@
-const { Model, DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../config/database');  // Ensure the sequelize instance is correctly imported
 
-class Rating extends Model {
+class Rating extends Sequelize.Model {
   static associate(models) {
-    Rating.belongsTo(models.User, { foreignKey: "UserId" });
+    // Rating belongs to User (UserId ile ilişki kurar)
+    Rating.belongsTo(models.User, { foreignKey: 'UserId' });
 
-    Rating.belongsTo(models.Recipe, { foreignKey: "RecipeId" });
+    // Rating belongs to Recipe (RecipeId ile ilişki kurar)
+    Rating.belongsTo(models.Recipe, { foreignKey: 'RecipeId' });
   }
 }
 
@@ -30,10 +32,12 @@ Rating.init(
     },
   },
   {
-    sequelize,
-    modelName: "Rating",
-    tableName: "Ratings",
-    timestamps: false,
+    sequelize,           
+    modelName: 'Rating',  
+    tableName: 'Ratings', 
+    timestamps: false,  
+    createdAt: false,
+    updatedAt: false  
   }
 );
 

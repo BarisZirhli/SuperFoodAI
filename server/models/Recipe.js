@@ -1,20 +1,15 @@
-const {
-  Model
-} = require("sequelize");
+const { DataTypes, Sequelize } = require("sequelize");
+const sequelize = require("../config/database");
 
-module.exports = (sequelize, DataTypes) => {
-  class Recipe extends Model {
-    static associate(models) {
-      Recipe.hasMany(models.Rating, {
-        foreignKey: "RecipeId"
-      });
-      Recipe.hasMany(models.FavoriteRecipe, {
-        foreignKey: "RecipeId"
-      });
-    }
+class Recipe extends Sequelize.Model {
+  static associate(models) {
+    Recipe.hasMany(models.Rating, { foreignKey: "RecipeId" });
+    Recipe.hasMany(models.FavoriteRecipe, { foreignKey: "RecipeId" });
   }
+}
 
-  Recipe.init({
+Recipe.init(
+  {
     RecipeId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -36,13 +31,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-  }, {
+    Image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Rating: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    Calories: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+  },
+  {
     sequelize,
     modelName: "Recipe",
     tableName: "Recipes",
     timestamps: false,
-  });
+    createdAt: false,
+    updatedAt: false
+  }
+);
 
-  return Recipe;
-};
-// image,rate,calories,
+module.exports = Recipe;

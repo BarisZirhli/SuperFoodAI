@@ -3,22 +3,15 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const sequelize = require('./config/database')
-
-var recipeRoutes = require("./routes/recipeRoutes.js");
-var favouriteRecipeRoutes = require("./routes/favouriteRecipeRoutes");
 
 var app = express();
 
+// Middleware
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
-
-// API usages
-app.use("/api/recipes", recipeRoutes);
-app.use("/api/favouriterecipes", favouriteRecipeRoutes);
+app.use(express.static(path.join(__dirname, "public"))); 
 
 // 404 Not Found Error
 app.use(function (req, res, next) {
@@ -34,15 +27,15 @@ app.use(function (err, req, res, next) {
   });
 });
 
+const { sequelize } = require("./models");
+
 (async () => {
   try {
-    await sequelize.authenticate(); 
-    console.log('PostgreSQL connection has been established successfully.');
+    await sequelize.sync({ force: process.env.NODE_ENV === "development" });
+    console.log("Database synchronized successfully!");
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error("Error synchronizing database:", error);
   }
 })();
-
-
 
 module.exports = app;
