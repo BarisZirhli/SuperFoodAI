@@ -2,8 +2,8 @@
   "dev": {
     "driver": "pg",
     "user": "postgres",
-    "password": "1234",
+    "password": "mitaka",
     "host": "localhost",
-    "database": "SuperFoodAID"
+    "database": "SuperFoodDb"
   }
 }

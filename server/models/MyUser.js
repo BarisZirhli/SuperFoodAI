@@ -1,14 +1,8 @@
-const { DataTypes, Sequelize } = require("sequelize");
-const sequelize = require("../config/config.json").development;
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-class User extends Sequelize.Model {
-  static associate(models) {
-    User.hasMany(models.Rating, { foreignKey: "UserId" });
-    User.hasMany(models.FavoriteRecipe, { foreignKey: "UserId" });
-  }
-}
-
-User.init(
+const MyUser = sequelize.define(
+  "MyUser",
   {
     UserId: {
       type: DataTypes.INTEGER,
@@ -59,4 +53,4 @@ User.init(
   }
 );
 
-module.exports = User;
+module.exports = MyUser;

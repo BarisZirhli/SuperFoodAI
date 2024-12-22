@@ -1,48 +1,42 @@
-const { DataTypes, Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-class Recipe extends Sequelize.Model {
-  static associate(models) {
-    Recipe.hasMany(models.Rating, { foreignKey: "RecipeId" });
-    Recipe.hasMany(models.FavoriteRecipe, { foreignKey: "RecipeId" });
-  }
-}
-
-Recipe.init(
+const Recipe = sequelize.define(
+  "MyRecipe",
   {
     RecipeId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: true
     },
     Name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     Ingredients: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: false
     },
     Instructions: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: false
     },
     CookTime: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
     Image: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
-    Rating: {
+    RecipeRating: {
       type: DataTypes.FLOAT,
-      allowNull: true,
+      allowNull: true
     },
     Calories: {
       type: DataTypes.FLOAT,
-      allowNull: true,
-    },
+      allowNull: true
+    }
   },
   {
     sequelize,
@@ -53,5 +47,4 @@ Recipe.init(
     updatedAt: false
   }
 );
-
 module.exports = Recipe;
