@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -36,17 +36,12 @@ module.exports = {
           min: 0,
           max: 5
         }
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
       }
+    }, {
+      timestamps: false // createdAt ve updatedAt sütunlarını kullanmak istemediğiniz için bu ayarı ekliyoruz
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Ratings");
   }

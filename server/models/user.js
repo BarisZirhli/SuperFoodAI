@@ -15,6 +15,7 @@ User.init(
   {
     email: DataTypes.STRING,
     password: DataTypes.STRING,
+    height: DataTypes.FLOAT,
     weight: DataTypes.FLOAT,
     age: DataTypes.INTEGER,
     gender: DataTypes.STRING
