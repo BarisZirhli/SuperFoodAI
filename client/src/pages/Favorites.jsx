@@ -1,9 +1,37 @@
-import React from 'react'
+import React from "react";
+import FavoriteRecipes from "../components/FavoriteRecipes";
 
-function Favorites() {
+const Favorites = () => {
+  // const favoriteRecipes = [
+  //   {
+  //     name: "Fırında Kabak ve Patlıcan Graten",
+  //     img: "https://via.placeholder.com/150", // Görseller için URL ekleyin
+  //   },
+  //   {
+  //     name: "Fırında Sebzeli Karnıbahar",
+  //     img: "https://via.placeholder.com/150",
+  //   },
+  //   {
+  //     name: "Biber Salatası",
+  //     img: "https://via.placeholder.com/150",
+  //   },
+  //   {
+  //     name: "Etli Sebze Güveci",
+  //     img: "https://via.placeholder.com/150",
+  //   },
+  // ];
+
   return (
-    <div>Favorites</div>
-  )
-}
+    <div className="container mt-4">
+      <header className="text-center bg-success text-white py-3 rounded">
+        <h1>SuperFoodAI</h1>
+      </header>
 
-export default Favorites
+      <div className="mt-4">
+        <FavoriteRecipe recipes={favoriteRecipes} />
+      </div>
+    </div>
+  );
+};
+
+export default Favorites;
