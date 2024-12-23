@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -23,17 +23,12 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
       }
+    }, {
+      timestamps: false // Bu ayar, createdAt ve updatedAt sütunlarını eklemez
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Recipes");
   }

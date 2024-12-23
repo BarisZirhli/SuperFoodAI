@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("FavoriteRecipes", {
@@ -31,15 +31,9 @@ module.exports = {
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE"
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
       }
+    }, {
+      timestamps: false // createdAt ve updatedAt sütunlarını kullanmak istemediğiniz için bu ayarı ekliyoruz
     });
   },
   async down(queryInterface, Sequelize) {
