@@ -14,7 +14,7 @@ const Rating = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "User",
+        model: "MyUser",
         key: "UserId"
       }
     },
