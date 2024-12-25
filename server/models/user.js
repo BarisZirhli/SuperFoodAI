@@ -1,4 +1,4 @@
-"use strict";
+("use strict");
 const sequelize = require("../config/database");
 const { Model, DataTypes } = require("sequelize");
 class User extends Model {
@@ -8,7 +8,8 @@ class User extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    // define association here
+    User.hasMany(models.Rating, { foreignKey: "UserId" });
+    User.hasMany(models.FavoriteRecipe, { foreignKey: "UserId" });
   }
 }
 User.init(
@@ -18,11 +19,11 @@ User.init(
     height: DataTypes.FLOAT,
     weight: DataTypes.FLOAT,
     age: DataTypes.INTEGER,
-    gender: DataTypes.STRING
+    gender: DataTypes.STRING,
   },
   {
     sequelize,
-    modelName: "User"
+    modelName: "User",
   }
 );
 module.exports = User;

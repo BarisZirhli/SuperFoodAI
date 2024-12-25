@@ -9,18 +9,30 @@ class FavoriteRecipe extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    // define association here
+    FavoriteRecipe.belongsTo(models.User, { foreignKey: "UserId"});
+    FavoriteRecipe.belongsTo(models.Recipe, { foreignKey: 'RecipeId'});
   }
 }
+
 FavoriteRecipe.init(
   {
-    FavoriteRecipeId: DataTypes.INTEGER,
-    UserId: DataTypes.INTEGER,
-    RecipeId: DataTypes.INTEGER
+    FavoriteRecipeId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    RecipeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     sequelize,
-    modelName: "FavoriteRecipe"
+    modelName: "FavoriteRecipe",
   }
 );
 

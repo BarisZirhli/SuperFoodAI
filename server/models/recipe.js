@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 const sequelize = require("../config/database");
 const { Model, DataTypes } = require("sequelize");
 class Recipe extends Model {
@@ -8,7 +8,8 @@ class Recipe extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    // define association here
+    Recipe.hasMany(models.FavoriteRecipe, { foreignKey: "RecipeId" });
+    Recipe.hasMany(models.Rating, { foreignKey: "RecipeId" });
   }
 }
 Recipe.init(
@@ -17,11 +18,11 @@ Recipe.init(
     ingredients: DataTypes.TEXT,
     instructions: DataTypes.TEXT,
     cookTime: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER
+    calories : DataTypes.DECIMAL,
   },
   {
     sequelize,
-    modelName: "Recipe"
+    modelName: "Recipe",
   }
 );
 module.exports = Recipe;

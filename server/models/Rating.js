@@ -8,7 +8,11 @@ class Rating extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    // define association here
+
+    Rating.belongsTo(models.User, { foreignKey: 'UserId' });
+    Rating.belongsTo(models.Recipe, { foreignKey: 'RecipeId' });
+
+
   }
 }
 Rating.init(
