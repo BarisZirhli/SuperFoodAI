@@ -8,7 +8,6 @@ class Recipe extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    Recipe.hasMany(models.FavoriteRecipe, { foreignKey: "RecipeId" });
     Recipe.hasMany(models.Rating, { foreignKey: "RecipeId" });
   }
 }
