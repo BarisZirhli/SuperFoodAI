@@ -63,12 +63,12 @@ function RecipeList() {
       <div style={{ position: "relative" }}>
         <input
           type="text"
-          placeholder="Tavuk göğsü, mantar, kabak, domates, fesleğen, bal, soya sosu, sarımsak ve taze otlar ile yapılabilecek lezzetli yemek tarifleri oluştur"
+          placeholder="Tavuk göğsü, mantar, kabak, domates, fesleğen, bal, soya sosu, sarımsak ve taze otlar ile yapılabilecek lezzetli yemek tarifleri oluştur.."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{
             position: "fixed",
-            bottom: "10px",
+            bottom: "15px",
             left: "50%",
             transform: "translateX(-50%)",
             padding: "15px 40px 15px 15px",

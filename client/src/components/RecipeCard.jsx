@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
+import { IoHeartCircleOutline } from "react-icons/io5";
 
 function RecipeCard({ title, calories, ingredients, instructions, image }) {
   const [flipped, setFlipped] = useState(false);
@@ -32,7 +33,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
   return (
     <div
       style={{
-        perspective: "1000px"
+        perspective: "1000px",
       }}
     >
       <div
@@ -44,7 +45,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
           cursor: "pointer",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
         <Card
@@ -56,7 +57,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             display: "grid",
             gap: "60px",
             marginLeft: "10px",
-            marginRight: "10px"
+            marginRight: "10px",
           }}
         >
           <Card.Img
@@ -66,7 +67,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             style={{
               height: "200px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0"
+              borderRadius: "10px 10px 0 0",
             }}
           />{" "}
           <Card.Body>
@@ -75,6 +76,17 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
               <strong> Calories: </strong> {calories}
               kcal{" "}
             </Card.Text>{" "}
+            <button
+              style={{
+                all: "unset",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IoHeartCircleOutline style={{ fontSize: "35px" }} />
+            </button>
           </Card.Body>{" "}
         </Card>
         <Card
@@ -87,21 +99,21 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
 
             transform: "rotateY(180deg)",
             borderRadius: "10px",
-            overflowY: "auto"
+            overflowY: "auto",
           }}
         >
           <Card.Body className="card-body">
             <Card.Title> Ingredients </Card.Title>{" "}
             <ul
               style={{
-                textAlign: "left"
+                textAlign: "left",
               }}
             >
               {" "}
               {ingredientList.map((ingredient, index) => (
                 <li
                   style={{
-                    listStyleType: "none"
+                    listStyleType: "none",
                   }}
                   key={index}
                 >
@@ -113,7 +125,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             <Card.Title> Instructions </Card.Title>{" "}
             <ol
               style={{
-                textAlign: "left"
+                textAlign: "left",
               }}
             >
               {" "}
