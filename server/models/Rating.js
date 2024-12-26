@@ -12,7 +12,6 @@ class Rating extends Model {
     Rating.belongsTo(models.User, { foreignKey: 'UserId' });
     Rating.belongsTo(models.Recipe, { foreignKey: 'RecipeId' });
 
-
   }
 }
 Rating.init(
@@ -23,7 +22,8 @@ Rating.init(
   },
   {
     sequelize,
-    modelName: "Rating"
+    modelName: "Rating",
+    timestamps: false,
   }
 );
 

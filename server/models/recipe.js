@@ -22,6 +22,7 @@ Recipe.init(
   {
     sequelize,
     modelName: "Recipe",
+    timestamps: false,
   }
 );
 module.exports = Recipe;

@@ -14,6 +14,8 @@ class User extends Model {
 }
 User.init(
   {
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     height: DataTypes.FLOAT,
@@ -24,6 +26,7 @@ User.init(
   {
     sequelize,
     modelName: "User",
+    timestamps: false,
   }
 );
 module.exports = User;
