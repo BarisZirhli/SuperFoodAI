@@ -9,41 +9,40 @@ module.exports = {
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER,
+          type: Sequelize.INTEGER
         },
         firstName: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING
         },
-        lastName : {
-          type: Sequelize.STRING,
+        lastName: {
+          type: Sequelize.STRING
         },
-        
         email: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING
         },
         password: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING
         },
         height: {
-          type: Sequelize.FLOAT,
+          type: Sequelize.FLOAT
         },
         weight: {
-          type: Sequelize.FLOAT,
+          type: Sequelize.FLOAT
         },
         age: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.INTEGER
         },
         gender: {
-          type: Sequelize.STRING,
-        },
+          type: Sequelize.STRING
+        }
       },
       {
-        timestamps: false,
+        timestamps: false
       }
     );
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Users");
-  },
+  }
 };
