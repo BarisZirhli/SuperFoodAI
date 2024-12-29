@@ -17,7 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RecipeList />}></Route>
         <Route path="/favorites" element={<Favorites />}></Route>
-        <Route path="/register" element={<Register />}></Route>
+        <Route path="/signup" element={<Register />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
