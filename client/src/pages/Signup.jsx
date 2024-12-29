@@ -1,13 +1,15 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert, Row, Col } from "react-bootstrap";
+import { signup } from "../API/api"; // signup işlevini api.js'den import et
 
-const Register = () => {
+const Signup = () => {
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     height: "",
     weight: "",
     gender: "",
@@ -15,6 +17,7 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,8 +26,8 @@ const Register = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.firstname) newErrors.firstname = "Firstname is required!";
-    if (!formData.lastname) newErrors.lastname = "Lastname is required!";
+    if (!formData.firstName) newErrors.firstName = "Firstname is required!";
+    if (!formData.lastName) newErrors.lastName = "Lastname is required!";
     if (!formData.height) newErrors.height = "Height is required!";
     if (!formData.weight) newErrors.weight = "Weight is required!";
     if (!formData.gender) newErrors.gender = "Gender is required!";
@@ -44,17 +47,29 @@ const Register = () => {
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match!";
     }
-    
+
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      setSuccess(true);
-      setErrors({});
-      console.log("Form Submitted:", formData);
+      try {
+        const response = await signup(formData);
+        if (response.success) {
+          setSuccess(true);
+          setServerError("");
+          setErrors({});
+          console.log("Form Submitted:", response.message);
+        } else {
+          setServerError(response.message || "Signup failed!");
+          setSuccess(false);
+        }
+      } catch (error) {
+        setServerError("An error occurred during signup.");
+        console.error(error);
+      }
     } else {
       setErrors(validationErrors);
       setSuccess(false);
@@ -77,14 +92,14 @@ const Register = () => {
                 <Form.Label>Firstname</Form.Label>
                 <Form.Control
                   type="text"
-                  name="firstname"
+                  name="firstName"
                   placeholder="Enter your firstname"
                   value={formData.firstname}
                   onChange={handleChange}
-                  isInvalid={!!errors.firstname}
+                  isInvalid={!!errors.firstName}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.firstname}
+                  {errors.firstName}
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -92,14 +107,14 @@ const Register = () => {
                 <Form.Label>Lastname</Form.Label>
                 <Form.Control
                   type="text"
-                  name="lastname"
+                  name="lastName"
                   placeholder="Enter your lastname"
-                  value={formData.lastname}
+                  value={formData.lastName}
                   onChange={handleChange}
-                  isInvalid={!!errors.lastname}
+                  isInvalid={!!errors.lastName}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.lastname}
+                  {errors.lastName}
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -120,7 +135,7 @@ const Register = () => {
               <Form.Group className="mb-2" controlId="formHeight">
                 <Form.Label>Height</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name="height"
                   placeholder="Enter your height (175)"
                   value={formData.height}
@@ -133,13 +148,11 @@ const Register = () => {
               </Form.Group>
             </Col>
 
-            {/* Right Column */}
-
             <Col md={6}>
               <Form.Group className="mb-2" controlId="formWeight">
                 <Form.Label>Weight</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   name="weight"
                   placeholder="Enter your weight (80)"
                   value={formData.weight}
@@ -150,6 +163,20 @@ const Register = () => {
                   {errors.weight}
                 </Form.Control.Feedback>
               </Form.Group>
+              <Form.Group className="mb-2" controlId="formWeight">
+                <Form.Label>Age</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="age"
+                  placeholder="Enter your weight (80)"
+                  value={formData.age}
+                  onChange={handleChange}
+                  isInvalid={!!errors.age}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.age}
+                </Form.Control.Feedback>
+              </Form.Group>
               <Form.Group className="mb-2" controlId="formGender">
                 <Form.Label>Gender</Form.Label>
                 <Form.Select
@@ -158,8 +185,7 @@ const Register = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.gender}
                 >
-                  <option value="">Select your gender</option>{" "}
-                  {/* Placeholder */}
+                  <option>Select your gender</option>{" "}
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </Form.Select>
@@ -209,4 +235,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Signup;
