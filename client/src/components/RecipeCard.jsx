@@ -85,7 +85,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
                 justifyContent: "center",
               }}
             >
-              <IoHeartCircleOutline style={{ fontSize: "35px" }} />
+              <IoHeartCircleOutline style={{ fontSize: "60px" }} />
             </button>
           </Card.Body>{" "}
         </Card>

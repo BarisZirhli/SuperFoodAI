@@ -24,6 +24,9 @@ module.exports = {
       imageUrl: {
         type: Sequelize.TEXT
       },
+      avgRate: {
+        type: Sequelize.FLOAT
+      }
     }, {
       timestamps: false // Bu ayar, createdAt ve updatedAt sütunlarını eklemez
     });

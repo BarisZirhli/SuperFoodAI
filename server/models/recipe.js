@@ -19,6 +19,7 @@ Recipe.init(
     cookTime: DataTypes.INTEGER,
     imageUrl : DataTypes.TEXT,
     calories : DataTypes.DECIMAL,
+    avgRate: DataTypes.FLOAT,
   },
   {
     sequelize,
