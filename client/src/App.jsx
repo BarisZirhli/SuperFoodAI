@@ -5,9 +5,9 @@ import Login from "./pages/Login";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
+import Signup from "./pages/Signup";
 import {Container} from "react-bootstrap";
 import "./App";
-import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -15,7 +15,8 @@ function App() {
       <Container>
       <Header/>
       <Routes>
-        <Route path="/" element={<RecipeList />}></Route>
+        <Route path="/" element={<RecipeList/>}></Route>
+        <Route path="/home" element={<RecipeList/>}></Route>
         <Route path="/favorites" element={<Favorites />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/login" element={<Login />}></Route>

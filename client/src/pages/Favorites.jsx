@@ -1,5 +1,5 @@
 import React from "react";
-import FavoriteRecipes from "../components/FavoriteRecipes";
+import FavoriteRecipeCar from "../components/FavoriteRecipeCard";
 
 const Favorites = () => {
   // const favoriteRecipes = [

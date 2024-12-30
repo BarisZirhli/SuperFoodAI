@@ -21,9 +21,9 @@ module.exports = {
       cookTime: {
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER
-      }
+      imageUrl: {
+        type: Sequelize.TEXT
+      },
     }, {
       timestamps: false // Bu ayar, createdAt ve updatedAt sütunlarını eklemez
     });

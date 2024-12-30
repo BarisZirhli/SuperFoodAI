@@ -5,13 +5,25 @@ import { Container, Row, Col } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/RecipeList.css";
+import { useNavigate } from "react-router-dom";
 
-function RecipeList() {
+function Home() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const navigate = useNavigate(); 
 
+    
+  useEffect(() => {
+    if (!localStorage.getItem("authToken")) {
+      navigate("/login");
+    }
+    else{
+      navigate("/home");
+    }
+  }, [navigate]);
+  
   const fetchRecipes = async () => {
     try {
       setLoading(true);
@@ -88,4 +100,4 @@ function RecipeList() {
   );
 }
 
-export default RecipeList;
+export default Home;

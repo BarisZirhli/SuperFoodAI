@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 
-function FavoriteRecipes({ title, calories, ingredients, instructions, image }) {
+function FavoriteRecipeCard({ title, calories, ingredients, instructions, image }) {
   const [flipped, setFlipped] = useState(false);
 
   const handleCardClick = () => {
@@ -128,4 +128,4 @@ function FavoriteRecipes({ title, calories, ingredients, instructions, image }) 
   );
 }
 
-export default FavoriteRecipes;
+export default FavoriteRecipeCard;

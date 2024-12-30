@@ -1,22 +1,29 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert } from "react-bootstrap";
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:3000";
+import { useNavigate } from "react-router-dom";
+import { login } from "../API/api";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  // New state for login success
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    if (formData.email && formData.password) {
+      setSuccess(false);
+    }
   };
 
   const validate = () => {
@@ -41,17 +48,15 @@ const Login = () => {
     if (Object.keys(validationErrors).length === 0) {
       setErrors({});
       try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
-        
-        if (response.data.success) {
+        const response = await login(formData);
+
+        if (response.status == "success") {
           setSuccess(true);
-          setErrorMessage("");
-          console.log("Login Successful:", response.data);
-          
-          localStorage.setItem("authToken", response.data.token);
-          
-         } else {
-          setErrorMessage(response.data.message || "Login failed!");
+          localStorage.setItem("authToken", response.token);
+          setIsLoggedIn(true); 
+          setSuccessMessage("Login successful!");
+        } else {
+          setErrorMessage("Incorrect email or password");
           setSuccess(false);
         }
       } catch (error) {
@@ -62,14 +67,26 @@ const Login = () => {
       setErrors(validationErrors);
       setSuccess(false);
     }
+    console.log("Form Data Sent:", formData);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/home");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="container registerContainer mt-5 d-flex flex-column justify-content-center bg-light p-3 px-5 rounded">
       <div>
         <h2 className="mb-4 text-center">Login</h2>
-        {success && <Alert variant="success">Login successful!</Alert>}
-        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+        {success && (
+          <Alert variant="success">Login successful!</Alert>
+        )}
+        {errorMessage && !success && (
+          <Alert variant="danger">{errorMessage}</Alert>
+        )}
+
         <Form
           onSubmit={handleSubmit}
           className="d-flex flex-column justify-content-center align-items-center"
@@ -83,6 +100,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               isInvalid={!!errors.email}
+              required
             />
             <Form.Control.Feedback type="invalid">
               {errors.email}
@@ -98,6 +116,7 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               isInvalid={!!errors.password}
+              required
             />
             <Form.Control.Feedback type="invalid">
               {errors.password}
@@ -111,7 +130,9 @@ const Login = () => {
 
         <div className="mt-3 text-center">
           <span>Don't have an account? </span>
-          <a href="/signup" className="text-decoration-none">Sign Up</a>
+          <a href="/signup" className="text-decoration-none">
+            Sign Up
+          </a>
         </div>
       </div>
     </div>
