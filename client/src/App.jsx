@@ -1,6 +1,6 @@
 import "./App.css";
 import { Routes, Route, Link } from "react-router-dom";
-import RecipeList from "./components/RecipeList";
+import RecipeList from "./pages/Home";
 import Login from "./pages/Login";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";

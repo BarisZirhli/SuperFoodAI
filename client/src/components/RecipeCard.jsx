@@ -2,14 +2,37 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
+import { addfavoriteRecipes } from "../API/api";
 
-function RecipeCard({ title, calories, ingredients, instructions, image }) {
+function RecipeCard({
+  recipeId,
+  title,
+  calories,
+  ingredients,
+  instructions,
+  image,
+}) {
   const [flipped, setFlipped] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
 
+  const handleHeartClick = (e) => {
+    e.stopPropagation();
+    console.log("Heart button clicked! Recipe ID:", recipeId);
+    addfavoriteRecipes(recipeId)
+      .then((response) => {
+        console.log("Response from addfavoriteRecipes:", response);
+        setMessage("Added to favorites!");
+      })
+      .catch((error) => {
+        console.error("Error adding to favorites:", error);
+        setMessage("Failed to add to favorites.");
+      });
+  };
+  
   const ingredientList = ingredients
     .replace(/C\s*\(/, "")
     .replace(")", "")
@@ -31,11 +54,7 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
   const firstImage = imageUrls[0];
 
   return (
-    <div
-      style={{
-        perspective: "1000px",
-      }}
-    >
+    <div style={{ perspective: "1000px" }}>
       <div
         onClick={handleCardClick}
         style={{
@@ -69,13 +88,12 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
               objectFit: "cover",
               borderRadius: "10px 10px 0 0",
             }}
-          />{" "}
+          />
           <Card.Body>
-            <Card.Title> {title} </Card.Title>{" "}
+            <Card.Title>{title}</Card.Title>
             <Card.Text>
-              <strong> Calories: </strong> {calories}
-              kcal{" "}
-            </Card.Text>{" "}
+              <strong>Calories:</strong> {calories} kcal
+            </Card.Text>
             <button
               style={{
                 all: "unset",
@@ -84,10 +102,11 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              onClick={handleHeartClick} // Stop propagation here
             >
               <IoHeartCircleOutline style={{ fontSize: "60px" }} />
             </button>
-          </Card.Body>{" "}
+          </Card.Body>
         </Card>
         <Card
           className="text-center"
@@ -96,20 +115,14 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
             backfaceVisibility: "hidden",
             position: "absolute",
             top: "0",
-
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
           }}
         >
           <Card.Body className="card-body">
-            <Card.Title> Ingredients </Card.Title>{" "}
-            <ul
-              style={{
-                textAlign: "left",
-              }}
-            >
-              {" "}
+            <Card.Title>Ingredients</Card.Title>
+            <ul style={{ textAlign: "left" }}>
               {ingredientList.map((ingredient, index) => (
                 <li
                   style={{
@@ -117,25 +130,19 @@ function RecipeCard({ title, calories, ingredients, instructions, image }) {
                   }}
                   key={index}
                 >
-                  {" "}
-                  {ingredient}{" "}
+                  {ingredient}
                 </li>
-              ))}{" "}
+              ))}
             </ul>
-            <Card.Title> Instructions </Card.Title>{" "}
-            <ol
-              style={{
-                textAlign: "left",
-              }}
-            >
-              {" "}
+            <Card.Title>Instructions</Card.Title>
+            <ol style={{ textAlign: "left" }}>
               {instructionList.map((instruction, index) => (
-                <li key={index}> {instruction} </li>
-              ))}{" "}
-            </ol>{" "}
-          </Card.Body>{" "}
-        </Card>{" "}
-      </div>{" "}
+                <li key={index}>{instruction}</li>
+              ))}
+            </ol>
+          </Card.Body>
+        </Card>
+      </div>
     </div>
   );
 }

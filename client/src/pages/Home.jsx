@@ -1,10 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import RecipeCard from "./RecipeCard";
+import RecipeCard from "../components/RecipeCard";
 import { Container, Row, Col } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/RecipeList.css";
+import { fetchRecipes } from "../API/api";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
@@ -12,40 +11,36 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-    
   useEffect(() => {
     if (!localStorage.getItem("authToken")) {
       navigate("/login");
-    }
-    else{
+    } else {
       navigate("/home");
     }
   }, [navigate]);
-  
-  const fetchRecipes = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const response = await axios.get("http://localhost:8000/search", {
-        params: { ingredients: query },
-      });
-      setRecipes(response.data);
-    } catch (err) {
-      console.error("An error occurred", err);
-      setError("An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    if (query) {
-      fetchRecipes();
-    } else {
-      setRecipes([]);
-    }
+    const fetchRecipesData = async () => {
+      if (query) {
+        setLoading(true);
+        setError("");
+        try {
+          const fetchedRecipes = await fetchRecipes(query);
+          setRecipes(fetchedRecipes);
+        } catch (err) {
+          console.error("An error occurred", err);
+          setError("An error occurred while fetching recipes.");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setRecipes([]);
+      }
+    };
+
+    fetchRecipesData();
   }, [query]);
 
   return (
@@ -58,6 +53,7 @@ function Home() {
             <Col xs={12} sm={6} md={3} lg={3} key={recipe.name}>
               <RecipeCard
                 className="recipeCard"
+                recipeId={recipe.recipeId}
                 title={recipe.name}
                 calories={recipe.calories}
                 ingredients={recipe.ingredients}
@@ -99,5 +95,4 @@ function Home() {
     </div>
   );
 }
-
 export default Home;
