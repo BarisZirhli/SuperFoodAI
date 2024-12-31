@@ -12,6 +12,8 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",  # Frontend (React) origin
     "http://127.0.0.1:5173",  # Another common localhost address
+    "http://localhost:3000",  # Frontend (React) origin
+    "http://127.0.0.1:3000",  # Another common localhost address
 ]
 
 # Add the CORSMiddleware
@@ -61,6 +63,7 @@ def search_recipes(ingredients: str):
 
     recipes = [
         {
+            "recipeId" :int(row["RecipeId"]),
             "name": row["Name"],
             "instructions": row["RecipeInstructions"],
             "image_url": row["Images"],

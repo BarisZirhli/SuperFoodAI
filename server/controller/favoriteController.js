@@ -36,4 +36,33 @@ const addFavorite = async (req, res, next) => {
   }
 };
 
-module.exports = addFavorite;
+const getFavorites = async (req, res) => {
+  const { userId } = req.params; 
+
+  try {
+    const favorites = await favoriteRecipe.findAll({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if (favorites.length === 0) {
+      return res.status(404).send({
+        message: "No favorite recipes found for this user.",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Favorite recipes retrieved successfully.",
+      favorites,
+    });
+  } catch (error) {
+    console.error("Error retrieving favorites:", error);
+    return res.status(500).send({
+      message: "An error occurred while retrieving favorite recipes.",
+    });
+  }
+};
+
+
+module.exports = {addFavorite, getFavorites};
