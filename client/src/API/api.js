@@ -45,36 +45,45 @@ export const fetchRecipes = async (query) => {
   }
 };
 
-export const addfavoriteRecipes = async (recipeId) => {
+export const addFavoriteRecipes = async (userId,recipeId) => {
   try {
-    const { data: userId } = await api.get("/api/auth/getUserId", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-
     const response = await api.post("/api/favorite/like", {
       userId: userId,
       recipeId: recipeId,
     });
-
+    console.log(userId,recipeId);
     return response;
   } catch (error) {
     if (error.response) {
       return error.response.data;
+    } else {
+      throw new Error(error.message || "Network error occurred.");
     }
-    throw new Error("Network error occurred.");
   }
 };
 
-export const getFavorites = async () => {
-  try {
-    const { data: userId } = await api.get("/api/auth/getUserId", {
+export const tokenToId = ()=>{
+  const token = localStorage.getItem("authToken");
+    if (!token) {
+      throw new Error("No token found. Please log in.");
+    }
+    const { tokenResponse } = api.get("/api/auth/tokenToId", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
+    console.log("Token response:", tokenResponse);
+}
 
+
+export const getFavorites = async () => {
+  try {
+    const { response } = await api.get("/api/auth/tokenToId", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    });
+    console.log(response.userId);
     const { data: favorites } = await api.get(`/api/favorites/${userId}`);
 
     return favorites;
@@ -85,6 +94,5 @@ export const getFavorites = async () => {
     throw new Error("Network error occurred.");
   }
 };
-
 
 export default api;

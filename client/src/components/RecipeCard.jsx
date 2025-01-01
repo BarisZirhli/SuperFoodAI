@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
-import { addfavoriteRecipes } from "../API/api";
+import { tokenToId } from "../API/api";
 
 function RecipeCard({
   recipeId,
@@ -22,17 +22,9 @@ function RecipeCard({
   const handleHeartClick = (e) => {
     e.stopPropagation();
     console.log("Heart button clicked! Recipe ID:", recipeId);
-    addfavoriteRecipes(recipeId)
-      .then((response) => {
-        console.log("Response from addfavoriteRecipes:", response);
-        setMessage("Added to favorites!");
-      })
-      .catch((error) => {
-        console.error("Error adding to favorites:", error);
-        setMessage("Failed to add to favorites.");
-      });
+    console.log("UserId: ", tokenToId());
   };
-  
+
   const ingredientList = ingredients
     .replace(/C\s*\(/, "")
     .replace(")", "")

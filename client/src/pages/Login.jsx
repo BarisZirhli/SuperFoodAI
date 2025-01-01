@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { login } from "../API/api";
+import { login, tokenToId } from "../API/api";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ const Login = () => {
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);  // New state for login success
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,6 +55,8 @@ const Login = () => {
           localStorage.setItem("authToken", response.token);
           setIsLoggedIn(true); 
           setSuccessMessage("Login successful!");
+          tokenToId();
+          console.log(tokenToId());
         } else {
           setErrorMessage("Incorrect email or password");
           setSuccess(false);

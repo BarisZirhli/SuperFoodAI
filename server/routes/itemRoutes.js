@@ -3,7 +3,6 @@ const { Item } = require("../models");
 
 const router = express.Router();
 
-// CREATE
 router.post("/", async (req, res) => {
   try {
     const item = await Item.create(req.body);

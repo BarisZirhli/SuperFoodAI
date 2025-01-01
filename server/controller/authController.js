@@ -85,4 +85,38 @@ const getUserId = (token) => {
   }
 };
 
-module.exports = { signup, login, getUserId };
+
+const tokenToId = async (req, res) => {
+  try {
+    if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization header is missing or invalid",
+      });
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, tokenKey); // Token doğrulama
+
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Token is invalid or missing user ID",
+      });
+    }
+
+    const userId = decoded.id;
+    return res.status(200).json({
+      success: true,
+      userId,
+    });
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
+  }
+};
+
+module.exports = { signup, login, getUserId,tokenToId };
