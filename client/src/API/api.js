@@ -47,7 +47,7 @@ export const fetchRecipes = async (query) => {
 
 export const addFavoriteRecipes = async (userId, recipeId) => {
   try {
-    const response = await api.post("/api/favorite/like", {
+    const response = await api.post("/api/favorite/addFavorite", {
       userId: userId,
       recipeId: recipeId,
     });

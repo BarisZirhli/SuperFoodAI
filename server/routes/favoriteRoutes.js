@@ -3,7 +3,7 @@ const router = express.Router();
 const {addFavorite} = require("../controller/favoriteController");
 const {getFavorites} = require("../controller/favoriteController");
 
-router.post("/like", addFavorite);
+router.post("/addFavorite", addFavorite);
 router.get("/getFavorites", getFavorites);
 
 

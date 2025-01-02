@@ -9,8 +9,8 @@ class FavoriteRecipe extends Model {
    * The `models/index` file will call this method automatically.
    */
   static associate(models) {
-    FavoriteRecipe.belongsTo(models.User, { foreignKey: "UserId"});
-    FavoriteRecipe.belongsTo(models.Recipe, { foreignKey: 'RecipeId'});
+    FavoriteRecipe.belongsTo(models.user, { foreignKey: "userId"});
+    FavoriteRecipe.belongsTo(models.recipe, { foreignKey: 'recipeId'});
   }
 }
 

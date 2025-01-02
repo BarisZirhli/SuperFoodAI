@@ -1,15 +1,14 @@
 const favoriteRecipe = require("../models/FavoriteRecipe");
 
 const addFavorite = async (req, res, next) => {
-  const body = req.body;
 
   try {
-    const { userId, recipeId } = body;
+    const { userId, recipeId } = req.body;
 
     const existingFavorite = await favoriteRecipe.findOne({
       where: {
-        userId: userId,
-        recipeId: recipeId
+        UserId: userId,
+        RecipeId: recipeId
       }
     });
 
@@ -20,8 +19,8 @@ const addFavorite = async (req, res, next) => {
     }
 
     const favoriteFood = await favoriteRecipe.create({
-      userId: userId,
-      recipeId: recipeId
+      UserId: userId,
+      RecipeId: recipeId
     });
 
     return res.status(201).send({
@@ -31,7 +30,7 @@ const addFavorite = async (req, res, next) => {
   } catch (error) {
     console.error("Error adding favorite:", error);
     return res.status(500).send({
-      message: "An error occurred while adding the recipe to favorites."
+      message: `${error}`
     });
   }
 };

@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.FLOAT
       }
     }, {
-      timestamps: false // Bu ayar, createdAt ve updatedAt sütunlarını eklemez
+      timestamps: false
     });
   },
 
