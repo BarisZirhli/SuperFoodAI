@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const tokenKey = "ai-based-food-recommendation-system";
 const generateToken = (user) => {
-  return jwt.sign({ id: user.id }, tokenKey, { expiresIn: "1h" });
+  return jwt.sign({ id: user.id }, tokenKey, { expiresIn: "500h" });
 };
 
 const signup = async (req, res, next) => {
@@ -122,14 +122,18 @@ const tokenToId = async (req, res) => {
 };
 
 const signout = (req, res) => {
-  res.clearCookie("authToken");
+  res.clearCookie("authToken", {
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+  });
 
   return res.status(200).json({ message: "Signed out successfully" });
 };
 
 const deleteAccount = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.id;
 
     const user = await user.destroy({
       where: { id: userId }

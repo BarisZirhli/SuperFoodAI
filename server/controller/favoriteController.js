@@ -68,7 +68,6 @@ const getFavorites = async (req, res) => {
   }
 };
 
-
 const getFavoriteDetails = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -77,23 +76,20 @@ const getFavoriteDetails = async (req, res) => {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    // Kullanıcının favori tariflerinin RecipeId'lerini al
     const favoriteRecipes = await favoriteRecipe.findAll({
-      where: { UserId: userId }, // Favori tariflerin UserId'ye göre sorgulama yapıyoruz
-      attributes: ["RecipeId"], // Sadece RecipeId'yi alıyoruz
+      where: { UserId: userId },
+      attributes: ["RecipeId"],
     });
 
-    // recipeIds dizisini oluştur
     const recipeIds = favoriteRecipes.map((fav) => fav.RecipeId);
 
     if (recipeIds.length === 0) {
-      return res.status(200).json([]); // Favori tarif yoksa boş dizi döner
+      return res.status(200).json([]);
     }
 
-    // Recipe modelinden tarif detaylarını alıyoruz
     const recipes = await recipe.findAll({
       where: {
-        id: recipeIds, // favori tariflerin ID'lerini burada kullanıyoruz
+        id: recipeIds,
       },
       attributes: [
         "id",
@@ -107,13 +103,13 @@ const getFavoriteDetails = async (req, res) => {
       ],
     });
 
-    return res.status(200).json(recipes); // Tarif detaylarını döneriz
+    return res.status(200).json(recipes);
   } catch (error) {
     console.error("Error fetching favorite details:", error);
-    return res.status(500).json({ message: `Failed to fetch favorite details: ${error.message}` });
+    return res
+      .status(500)
+      .json({ message: `Failed to fetch favorite details: ${error.message}` });
   }
 };
 
-
-
-module.exports = { addFavorite, getFavorites,getFavoriteDetails };
+module.exports = { addFavorite, getFavorites, getFavoriteDetails };

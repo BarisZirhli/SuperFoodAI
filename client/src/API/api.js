@@ -106,39 +106,22 @@ export const tokenToId = async () => {
 
 export const getFavoriteDetails = async () => {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      throw new Error("Authentication token not found. Please log in.");
-    }
-
-    const { data: tokenResponse } = await api.get("/auth/tokenToId", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const userId = tokenResponse.userId;
-
-    const { data: favoriteDetails } = await api.get(`/favorites/getFavoriteDetails/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return favoriteDetails; 
-  } catch (error) {
-    console.error("Error fetching favorite recipe details:", error);
-    if (error.response) {
-      return error.response.data; 
-    }
-    throw new Error("Network error occurred while fetching favorite recipe details.");
+    const token = await tokenToId();
+    const userId = token.userId;
+    console.log(userId);
+    const response = await api.get(
+      `/api/favorite/getFavoriteDetails/${userId}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error fetching favorites:", err);
+    throw new Error(`${err}`);
   }
 };
-
 export const signout = async () => {
   try {
     await api.post("/api/auth/signout");
-    localStorage.removeItem("authToken");
+    localStorage.clear();
     return { message: "Signed out successfully" };
   } catch (error) {
     if (error.response) {
