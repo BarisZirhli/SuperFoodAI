@@ -24,6 +24,9 @@ module.exports = {
       imageUrl: {
         type: Sequelize.TEXT
       },
+      calories: {
+        type: Sequelize.DECIMAL
+      },
       avgRate: {
         type: Sequelize.FLOAT
       }
