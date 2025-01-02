@@ -45,13 +45,13 @@ export const fetchRecipes = async (query) => {
   }
 };
 
-export const addFavoriteRecipes = async (userId,recipeId) => {
+export const addFavoriteRecipes = async (userId, recipeId) => {
   try {
     const response = await api.post("/api/favorite/like", {
       userId: userId,
       recipeId: recipeId,
     });
-    console.log(userId,recipeId);
+    console.log(userId, recipeId);
     return response;
   } catch (error) {
     if (error.response) {
@@ -62,19 +62,25 @@ export const addFavoriteRecipes = async (userId,recipeId) => {
   }
 };
 
-export const tokenToId = ()=>{
+export const tokenToId = async () => {
   const token = localStorage.getItem("authToken");
-    if (!token) {
-      throw new Error("No token found. Please log in.");
-    }
-    const { tokenResponse } = api.get("/api/auth/tokenToId", {
+  if (!token) {
+    throw new Error("No token found. Please log in.");
+  }
+
+  try {
+    const { data: tokenResponse } = await api.get("/api/auth/tokenToId", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     console.log("Token response:", tokenResponse);
-}
-
+    return tokenResponse;
+  } catch (error) {
+    console.error("Error fetching token to ID:", error);
+    throw new Error("Failed to fetch token to ID");
+  }
+};
 
 export const getFavorites = async () => {
   try {
@@ -87,6 +93,33 @@ export const getFavorites = async () => {
     const { data: favorites } = await api.get(`/api/favorites/${userId}`);
 
     return favorites;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    }
+    throw new Error("Network error occurred.");
+  }
+};
+
+export const signout = async () => {
+  try {
+    await api.post("/api/auth/signout");
+    localStorage.removeItem("authToken");
+    return { message: "Signed out successfully" };
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    }
+    throw new Error("Network error occurred.");
+  }
+};
+
+export const deleteAccount = async () => {
+  try {
+    const response = await api.delete("/api/auth/delete-account");
+
+    localStorage.removeItem("authToken");
+    return response.data;
   } catch (error) {
     if (error.response) {
       return error.response.data;
