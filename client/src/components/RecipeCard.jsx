@@ -3,6 +3,8 @@ import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
 import { tokenToId } from "../API/api";
+import { parseIngredients, parseInstructions, parseImageUrls } from "../utils/regex";
+
 
 function RecipeCard({
   recipeId,
@@ -25,24 +27,9 @@ function RecipeCard({
     console.log("UserId: ", tokenToId());
   };
 
-  const ingredientList = ingredients
-    .replace(/C\s*\(/, "")
-    .replace(")", "")
-    .split(",")
-    .map((item) => item.replace(/"/g, "").trim());
-
-  const instructionList = instructions
-    .replace(/^C\s*\(/, "")
-    .replace(/\)$/, "")
-    .split(/",\s*"/)
-    .map((step) => step.replace(/"/g, "").trim());
-
-  const imageUrls = image
-    .replace(/^c\(/, "")
-    .replace(/\)$/, "")
-    .split(/",\s*"/)
-    .map((url) => url.replace(/"/g, "").trim());
-
+  const ingredientList = parseIngredients(ingredients);
+  const instructionList = parseInstructions(instructions);
+  const imageUrls = parseImageUrls(image);
   const firstImage = imageUrls[0];
 
   return (
@@ -94,7 +81,7 @@ function RecipeCard({
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              onClick={handleHeartClick} // Stop propagation here
+              onClick={handleHeartClick}
             >
               <IoHeartCircleOutline style={{ fontSize: "60px" }} />
             </button>

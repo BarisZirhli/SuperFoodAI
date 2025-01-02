@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import RecipeCard from "../components/RecipeCard";
 import { Container, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../css/RecipeList.css";
+import "../css/Home.css";
 import { fetchRecipes } from "../API/api";
 import { useNavigate } from "react-router-dom";
 
@@ -48,7 +48,7 @@ function Home() {
       {loading && <p style={{ textAlign: "center" }}>Yükleniyor...</p>}
       {error && <p>{error}</p>}
       <Container>
-        <Row>
+      <Row className="justify-content-center">
           {recipes.map((recipe) => (
             <Col xs={12} sm={6} md={3} lg={3} key={recipe.name}>
               <RecipeCard
