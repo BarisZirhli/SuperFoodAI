@@ -62,6 +62,31 @@ export const addFavoriteRecipes = async (userId, recipeId) => {
   }
 };
 
+export const getFavorites = async () => {
+  try {
+    // Kullanıcının kimliğini al
+    const { data: response } = await api.get("/api/auth/tokenToId", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    });
+    const userId = response.userId; // userId tanımlaması burada yapılmalı
+
+    console.log(userId);
+
+    // Favori tarifleri al
+    const { data: favorites } = await api.get(`/api/favorites/${userId}`);
+
+    return favorites;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    }
+    throw new Error("Network error occurred.");
+  }
+};
+
+
 export const tokenToId = async () => {
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -79,25 +104,6 @@ export const tokenToId = async () => {
   } catch (error) {
     console.error("Error fetching token to ID:", error);
     throw new Error("Failed to fetch token to ID");
-  }
-};
-
-export const getFavorites = async () => {
-  try {
-    const { response } = await api.get("/api/auth/tokenToId", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-      },
-    });
-    console.log(response.userId);
-    const { data: favorites } = await api.get(`/api/favorites/${userId}`);
-
-    return favorites;
-  } catch (error) {
-    if (error.response) {
-      return error.response.data;
-    }
-    throw new Error("Network error occurred.");
   }
 };
 

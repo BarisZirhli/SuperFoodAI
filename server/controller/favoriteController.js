@@ -1,51 +1,54 @@
 const favoriteRecipe = require("../models/FavoriteRecipe");
 
 const addFavorite = async (req, res, next) => {
-
   try {
     const { userId, recipeId } = req.body;
 
     const existingFavorite = await favoriteRecipe.findOne({
       where: {
         UserId: userId,
-        RecipeId: recipeId
-      }
+        RecipeId: recipeId,
+      },
     });
 
     if (existingFavorite) {
       return res.status(400).send({
-        message: "This recipe is already in the favorites."
+        message: "This recipe is already in the favorites.",
       });
     }
 
     const favoriteFood = await favoriteRecipe.create({
       UserId: userId,
-      RecipeId: recipeId
+      RecipeId: recipeId,
     });
 
     return res.status(201).send({
       message: "Recipe added to favorites successfully!",
-      favoriteFood
+      favoriteFood,
     });
   } catch (error) {
     console.error("Error adding favorite:", error);
     return res.status(500).send({
-      message: `${error}`
+      message: `${error}`,
     });
   }
 };
 
 const getFavorites = async (req, res) => {
-  const { userId } = req.params; 
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).send({ message: "UserId is required." });
+  }
 
   try {
     const favorites = await favoriteRecipe.findAll({
       where: {
-        userId: userId,
+        UserId: userId,
       },
     });
 
-    if (favorites.length === 0) {
+    if (!favorites || favorites.length === 0) {
       return res.status(404).send({
         message: "No favorite recipes found for this user.",
       });
@@ -56,12 +59,12 @@ const getFavorites = async (req, res) => {
       favorites,
     });
   } catch (error) {
-    console.error("Error retrieving favorites:", error);
+    console.error("Error retrieving favorites:", error.message);
     return res.status(500).send({
       message: "An error occurred while retrieving favorite recipes.",
+      error: error.message,
     });
   }
 };
 
-
-module.exports = {addFavorite, getFavorites};
+module.exports = { addFavorite, getFavorites };
