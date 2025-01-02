@@ -64,17 +64,15 @@ export const addFavoriteRecipes = async (userId, recipeId) => {
 
 export const getFavorites = async () => {
   try {
-    // Kullanıcının kimliğini al
     const { data: response } = await api.get("/api/auth/tokenToId", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
     });
-    const userId = response.userId; // userId tanımlaması burada yapılmalı
+    const userId = response.userId;
 
     console.log(userId);
 
-    // Favori tarifleri al
     const { data: favorites } = await api.get(`/api/favorites/${userId}`);
 
     return favorites;
@@ -85,7 +83,6 @@ export const getFavorites = async () => {
     throw new Error("Network error occurred.");
   }
 };
-
 
 export const tokenToId = async () => {
   const token = localStorage.getItem("authToken");
