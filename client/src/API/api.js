@@ -45,13 +45,14 @@ export const fetchRecipes = async (query) => {
   }
 };
 
-export const addFavoriteRecipes = async (userId, recipeId) => {
+export const addFavoriteRecipes = async (recipeId) => {
   try {
+    const token = await tokenToId();
+    const userId = token.userId;
     const response = await api.post("/api/favorite/addFavorite", {
       userId: userId,
       recipeId: recipeId,
     });
-    console.log(userId, recipeId);
     return response;
   } catch (error) {
     if (error.response) {
@@ -119,8 +120,10 @@ export const getFavoriteDetails = async () => {
   }
 };
 
-export const deleteFavoriteRecipe = async (userId, recipeId) => {
+export const deleteFavoriteRecipe = async (recipeId) => {
   try {
+    const token = await tokenToId();
+    const userId = token.userId;
     const response = await api.delete(
       `/api/favorite/removeFavorite/${userId}/${recipeId}`,
       {

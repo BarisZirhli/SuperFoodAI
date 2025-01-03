@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
-import { tokenToId } from "../API/api";
 import { deleteFavoriteRecipe } from "../API/api";
 
 import {
@@ -22,19 +21,16 @@ function FavoriteRecipeCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
-  const { userId } = tokenToId(); 
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
 
-  const handleHeartClick = async(e) => {
+  const handleHeartClick = async (e) => {
     e.stopPropagation();
 
     console.log("Heart button clicked! Recipe ID:", recipeId);
-    console.log("UserId: ", userId);
-
     try {
-      const response =await deleteFavoriteRecipe(userId, recipeId);
+      const response = await deleteFavoriteRecipe(recipeId);
       if (response && response.message) {
         setMessage(response.message);
       } else {

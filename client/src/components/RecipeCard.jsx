@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
-import { tokenToId } from "../API/api";
-import { parseIngredients, parseInstructions, parseImageUrls } from "../utils/regex";
-
+import { addFavoriteRecipes, tokenToId } from "../API/api";
+import {
+  parseIngredients,
+  parseInstructions,
+  parseImageUrls,
+} from "../utils/regex";
 
 function RecipeCard({
   recipeId,
@@ -21,10 +24,21 @@ function RecipeCard({
     setFlipped((prev) => !prev);
   };
 
-  const handleHeartClick = (e) => {
+  const handleHeartClick = async (e) => {
     e.stopPropagation();
     console.log("Heart button clicked! Recipe ID:", recipeId);
     console.log("UserId: ", tokenToId());
+    try {
+      const response = await addFavoriteRecipes(recipeId);
+      if (response && response.message) {
+        setMessage(response.message);
+      } else {
+        setMessage("Recipe removed from favorites!");
+      }
+    } catch (error) {
+      console.error(`${error}`);
+      setMessage("An error occurred while removing the recipe.");
+    }
   };
 
   const ingredientList = parseIngredients(ingredients);
@@ -83,7 +97,7 @@ function RecipeCard({
               }}
               onClick={handleHeartClick}
             >
-              <IoHeartCircleOutline style={{ fontSize: "60px"}} />
+              <IoHeartCircleOutline style={{ fontSize: "60px" }} />
             </button>
           </Card.Body>
         </Card>
