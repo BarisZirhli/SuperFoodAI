@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getFavoriteDetails } from "../API/api";
+import { getFavoriteDetails, tokenToId } from "../API/api";
 import FavoriteRecipeCard from "../components/FavoriteRecipeCard";
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState("");
-
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const data = await getFavoriteDetails(); // userId dinamik olarak alınır
+        const data = await getFavoriteDetails();
         setFavorites(data);
       } catch (err) {
         setError(err.message || "An error occurred while fetching data.");
@@ -17,7 +16,7 @@ const Favorites = () => {
     };
 
     fetchFavorites();
-  }, []); // Bu, sayfa yüklendiğinde sadece bir kez çalışacak
+  }, []);
 
   if (error) {
     return <p style={{ color: "red" }}>{error}</p>;

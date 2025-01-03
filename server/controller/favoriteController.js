@@ -1,7 +1,7 @@
 const favoriteRecipe = require("../models/FavoriteRecipe");
 const recipe = require("../models/recipe");
 
-const addFavorite = async (req, res, next) => {
+const addFavorite = async (req, res) => {
   try {
     const { userId, recipeId } = req.body;
 
@@ -30,7 +30,8 @@ const addFavorite = async (req, res, next) => {
   } catch (error) {
     console.error("Error adding favorite:", error);
     return res.status(500).send({
-      message: `${error}`,
+      message: "An error occurred while adding to favorites.",
+      error: error.message,
     });
   }
 };
@@ -106,10 +107,52 @@ const getFavoriteDetails = async (req, res) => {
     return res.status(200).json(recipes);
   } catch (error) {
     console.error("Error fetching favorite details:", error);
-    return res
-      .status(500)
-      .json({ message: `Failed to fetch favorite details: ${error.message}` });
+    return res.status(500).json({
+      message: "Failed to fetch favorite details.",
+      error: error.message,
+    });
   }
 };
 
-module.exports = { addFavorite, getFavorites, getFavoriteDetails };
+const removeFavorite = async (req, res) => {
+  try {
+    const { userId, recipeId } = req.params;
+
+    const existingFavorite = await favoriteRecipe.findOne({
+      where: {
+        UserId: userId,
+        RecipeId: recipeId,
+      },
+    });
+
+    if (!existingFavorite) {
+      return res.status(404).send({
+        message: "The recipe is not in the user's favorites.",
+      });
+    }
+
+    await favoriteRecipe.destroy({
+      where: {
+        UserId: userId,
+        RecipeId: recipeId,
+      },
+    });
+
+    return res.status(200).send({
+      message: "Recipe removed from favorites successfully!",
+    });
+  } catch (error) {
+    console.error("Error removing favorite:", error);
+    return res.status(500).send({
+      message: "An error occurred while removing the recipe from favorites.",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  addFavorite,
+  getFavorites,
+  getFavoriteDetails,
+  removeFavorite,
+};

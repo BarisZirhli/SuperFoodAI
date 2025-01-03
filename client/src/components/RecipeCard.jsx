@@ -83,7 +83,7 @@ function RecipeCard({
               }}
               onClick={handleHeartClick}
             >
-              <IoHeartCircleOutline style={{ fontSize: "60px" }} />
+              <IoHeartCircleOutline style={{ fontSize: "60px"}} />
             </button>
           </Card.Body>
         </Card>

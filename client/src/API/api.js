@@ -118,6 +118,27 @@ export const getFavoriteDetails = async () => {
     throw new Error(`${err}`);
   }
 };
+
+export const deleteFavoriteRecipe = async (userId, recipeId) => {
+  try {
+    const response = await api.delete(
+      `/api/favorite/removeFavorite/${userId}/${recipeId}`,
+      {
+        userId: userId,
+        recipeId: recipeId,
+      }
+    );
+    console.log(userId, recipeId);
+    return response;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      throw new Error(error.message || "Network error occurred.");
+    }
+  }
+};
+
 export const signout = async () => {
   try {
     await api.post("/api/auth/signout");

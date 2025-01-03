@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       cookTime: {
-        type: Sequelize.INTEGER
+        type: Sequelize.TEXT
       },
       imageUrl: {
         type: Sequelize.TEXT

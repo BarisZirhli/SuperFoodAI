@@ -16,7 +16,7 @@ Recipe.init(
     name: DataTypes.STRING,
     ingredients: DataTypes.TEXT,
     instructions: DataTypes.TEXT,
-    cookTime: DataTypes.INTEGER,
+    cookTime: DataTypes.TEXT,
     imageUrl : DataTypes.TEXT,
     calories : DataTypes.DECIMAL,
     avgRate: DataTypes.FLOAT,

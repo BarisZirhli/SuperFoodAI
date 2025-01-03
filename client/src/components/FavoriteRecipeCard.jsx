@@ -3,6 +3,8 @@ import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
 import { tokenToId } from "../API/api";
+import { deleteFavoriteRecipe } from "../API/api";
+
 import {
   parseIngredients,
   parseInstructions,
@@ -20,15 +22,28 @@ function FavoriteRecipeCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
-
+  const { userId } = tokenToId(); 
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
 
-  const handleHeartClick = (e) => {
+  const handleHeartClick = async(e) => {
     e.stopPropagation();
+
     console.log("Heart button clicked! Recipe ID:", recipeId);
-    console.log("UserId: ", tokenToId());
+    console.log("UserId: ", userId);
+
+    try {
+      const response =await deleteFavoriteRecipe(userId, recipeId);
+      if (response && response.message) {
+        setMessage(response.message);
+      } else {
+        setMessage("Recipe removed from favorites!");
+      }
+    } catch (error) {
+      console.error(`${error}`);
+      setMessage("An error occurred while removing the recipe.");
+    }
   };
 
   const ingredientList = parseIngredients(ingredients);
@@ -87,7 +102,9 @@ function FavoriteRecipeCard({
               }}
               onClick={handleHeartClick}
             >
-              <IoHeartCircleOutline style={{ fontSize: "60px" }} />
+              <IoHeartCircleOutline
+                style={{ fontSize: "60px", backgroundColor: "red" }}
+              />
             </button>
           </Card.Body>
         </Card>
