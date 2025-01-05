@@ -45,6 +45,23 @@ export const fetchRecipes = async (query) => {
   }
 };
 
+export const fetchRecipesWithUser = async (query) => {
+  try {
+    const token = await tokenToId();
+    const userId = token.userId;
+
+    const response = await axios.get("http://localhost:8000/search", {
+      params: { ingredients: query, user_id: userId },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    return [];
+  }
+};
+
+
 export const addFavoriteRecipes = async (recipeId) => {
   try {
     const token = await tokenToId();
@@ -101,7 +118,7 @@ export const tokenToId = async () => {
     return tokenResponse;
   } catch (error) {
     console.error("Error fetching token to ID:", error);
-    throw new Error("Failed to fetch token to ID");
+    throw new Error(`${error}`);
   }
 };
 

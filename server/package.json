@@ -7,7 +7,7 @@
     "migrate": "npx sequelize-cli migration:generate --name",
     "save": "npx sequelize-cli db:migrate",
     "down": "npx sequelize-cli db:migrate:undo",
-    "all": "npx sequelize-cli db:migrate:undo:all",
+    "down:all": "npx sequelize-cli db:migrate:undo:all",
     "start:dev": "nodemon app.js",
     "proxy": "http://localhost:3000"
   },

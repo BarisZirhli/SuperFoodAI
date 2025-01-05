@@ -18,7 +18,7 @@ Rating.init(
   {
     UserId: DataTypes.INTEGER,
     RecipeId: DataTypes.INTEGER,
-    Rating: DataTypes.FLOAT
+    Rating: DataTypes.INTEGER
   },
   {
     sequelize,

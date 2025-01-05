@@ -30,7 +30,7 @@ module.exports = {
         onDelete: "CASCADE"
       },
       Rating: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
           min: 0,

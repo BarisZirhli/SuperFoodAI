@@ -3,7 +3,7 @@ import RecipeCard from "../components/RecipeCard";
 import { Container, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/Home.css";
-import { fetchRecipes } from "../API/api";
+import { fetchRecipesWithUser } from "../API/api";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
@@ -27,7 +27,7 @@ function Home() {
         setLoading(true);
         setError("");
         try {
-          const fetchedRecipes = await fetchRecipes(query);
+          const fetchedRecipes = await fetchRecipesWithUser(query);
           setRecipes(fetchedRecipes);
         } catch (err) {
           console.error("An error occurred", err);
