@@ -208,7 +208,8 @@ const Signup = () => {
                   {errors.password}
                 </Form.Control.Feedback>
               </Form.Group>
-
+            </Col>
+            <Col>
               <Form.Group className="mb-2" controlId="formConfirmPassword">
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
@@ -222,8 +223,7 @@ const Signup = () => {
                 <Form.Control.Feedback type="invalid">
                   {errors.confirmPassword}
                 </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
+              </Form.Group></Col>
           </Row>
 
           <Button className="btn btn-secondary mt-3" type="submit">
