@@ -6,13 +6,13 @@ def get_db_connection():
         connection = psycopg2.connect(
             dbname="SuperFoodDb",
             user="postgres",
-            password="mitaka",
+            password="1234",
             host="localhost",
             port="5432",
         )
         cursor = connection.cursor()
 
-        cursor.execute('SELECT "firstName" FROM "Users"')
+        cursor.execute('SELECT * FROM "Ratings"')
 
         rows = cursor.fetchall()
         for row in rows:

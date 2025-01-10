@@ -48,10 +48,10 @@ export const fetchRecipes = async (query) => {
 export const fetchRecipesWithUser = async (query) => {
   try {
     const token = await tokenToId();
-    const userId = token.userId;
+    const user_id = token.userId;
 
     const response = await axios.get("http://localhost:8000/search", {
-      params: { ingredients: query, user_id: userId },
+      params: { ingredients: query,user_id :user_id},
     });
 
     return response.data;

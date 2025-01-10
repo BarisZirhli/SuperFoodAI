@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import string
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import create_engine
 
 turkish_stop_words = [
     "a",
@@ -130,17 +131,25 @@ def get_db_connection():
         print(f"Error connecting to the database: {e}")
         return None
 
-
 vectorizer = TfidfVectorizer(
     stop_words=turkish_stop_words, ngram_range=(1, 2), max_features=1000
 )
-
 
 def calculate_bmi(weight, height):
     height_in_meters = height / 100
     bmi = weight / (height_in_meters**2)
     return bmi
 
+def get_db_engine():
+    try:
+        engine = create_engine(
+            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
+        )
+        print("Successfully connected to the database!")
+        return engine
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        return None
 
 @app.get("/search")
 def get_recommendations(user_id: int, ingredients: str):
@@ -150,29 +159,28 @@ def get_recommendations(user_id: int, ingredients: str):
         )
 
     user_query = ingredients.strip()
-    conn = get_db_connection()
+    conn = get_db_engine()
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
     query_ratings = (
         f'SELECT "RecipeId","Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
     )
-    df_ratings = pd.read_sql_query(query_ratings, conn)
-
+    df_ratings = pd.read_sql(query_ratings, conn)
+    print(f"Df_ratings: {df_ratings}")
     # Eğer kullanıcının favori yemekleri yoksa hata döndürelim
     if df_ratings.empty:
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     # Yemek tariflerini almak için veri çekme
     query_recipes = (
-        'SELECT "id", "name", "instructions", "ingredients", "calories" FROM "recipes"'
+        'SELECT "id", "name", "instructions", "ingredients", "calories" FROM "Recipes"'
     )
-    df_recipes = pd.read_sql_query(query_recipes, conn)
-
+    df_recipes = pd.read_sql(query_recipes, conn)
+    print(f" Df_recipes: {df_recipes}")
     # Kullanıcı bilgilerini almak (height, weight)
     query_user = f'SELECT "height", "weight" FROM "Users" WHERE "id" = {user_id}'
-    user_info = pd.read_sql_query(query_user, conn)
-
-    conn.close()
+    user_info = pd.read_sql(query_user, conn)
+    print(f"User info: {user_info}")
 
     # Kullanıcı bilgilerini kontrol et
     if user_info.empty:
@@ -200,13 +208,14 @@ def get_recommendations(user_id: int, ingredients: str):
     # --- Collaborative Filtering ---
 
     # Kullanıcılar arası benzerliği hesaplamak için user-item matrix oluşturma
-    user_item_matrix = pd.read_sql_query(
+    user_item_matrix = pd.read_sql(
         'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"', conn
     )
     user_item_matrix = user_item_matrix.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
 
+    print(f" User item matrix: {user_item_matrix}")
     # Kullanıcılar arası benzerlik matrisini hesaplama
     user_similarity_matrix = cosine_similarity(user_item_matrix)
 
@@ -227,13 +236,13 @@ def get_recommendations(user_id: int, ingredients: str):
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
         for recipe_id, rating in similar_user_ratings.items():
-            if rating >= 4 and recipe_id not in df_ratings["RecipeId"].values:
+            if rating >= 4 and recipe_id not in df_ratings['RecipeId'].values:
                 collaborative_recipes.append(recipe_id)
-
+    print(f"Colloborative matrix: {collaborative_recipes}")
     # --- Combine Content-Based and Collaborative Filtering ---
 
     # Filtrelenen tarifleri DataFrame üzerinden al
-    filtered_recipes = df_recipes[df_recipes["RecipeId"].isin(collaborative_recipes)]
+    filtered_recipes = df_recipes[df_recipes['RecipeId'].isin(collaborative_recipes)]
 
     # Kullanıcının BMI'ye göre yemek filtreleme (örneğin, aşırı kalori önermemek)
     if bmi < 18.5:
@@ -286,7 +295,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
 #     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
 #     query_ratings = f"SELECT RecipeId, Rating FROM Ratings WHERE UserId = {user_id} ORDER BY Rating DESC"
-#     df_ratings = pd.read_sql_query(query_ratings, conn)
+#     df_ratings = pd.read_sql(query_ratings, conn)
 
 #     # Eğer kullanıcının favori yemekleri yoksa hata döndürelim
 #     if df_ratings.empty:
@@ -294,11 +303,11 @@ def get_recommendations(user_id: int, ingredients: str):
 
 #     # Yemek tariflerini almak için veri çekme
 #     query_recipes = "SELECT id, name, ingredients, instructions, calories FROM Recipes"
-#     df_recipes = pd.read_sql_query(query_recipes, conn)
+#     df_recipes = pd.read_sql(query_recipes, conn)
 
 #     # Kullanıcı bilgilerini almak (height, weight)
 #     query_user = f"SELECT height, weight FROM Users WHERE id = {user_id}"
-#     user_info = pd.read_sql_query(query_user, conn)
+#     user_info = pd.read_sql(query_user, conn)
 
 #     conn.close()
 
@@ -324,7 +333,7 @@ def get_recommendations(user_id: int, ingredients: str):
 #     # --- Collaborative Filtering Section ---
 
 #     # Kullanıcılar arası benzerliği hesaplamak için user-item matrix oluşturma
-#     user_item_matrix = pd.read_sql_query("SELECT UserId, RecipeId, Rating FROM Ratings", conn)
+#     user_item_matrix = pd.read_sql("SELECT UserId, RecipeId, Rating FROM Ratings", conn)
 #     user_item_matrix = user_item_matrix.pivot(index='UserId', columns='RecipeId', values='Rating').fillna(0)
 
 #     # Kullanıcılar arası benzerlik matrisini hesaplama
@@ -379,7 +388,7 @@ def get_recommendations(user_id: int, ingredients: str):
 #             "calories": row["Calories"],
 #          } for _, row in filtered_recipes.iterrows()]
 
-#     return recommendations
+    # return cursor.fetchAll()
 
 
 if __name__ == "__main__":
