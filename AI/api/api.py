@@ -10,11 +10,72 @@ import string
 from fastapi.middleware.cors import CORSMiddleware
 
 turkish_stop_words = [
-    "a", "acaba", "altı", "ama", "ancak", "bazen", "bazı", "belki", "ben", "benden", "beni", "benim", "bir",
-    "biraz", "birçoğu", "biri", "birkaç", "biz", "bizden", "bize", "bizi", "bizim", "bu", "bunun", "bunu",
-    "bunu", "her", "herhangi", "hem", "hep", "için", "işte", "kadar", "karşı", "kendi", "kendine", "ki", "mı",
-    "mi", "çok", "çünkü", "de", "den", "daha", "diğer", "ile", "ilgili", "çok", "gibi", "hem", "henüz", "hep",
-    "herhangi", "hiç", "iç", "şu", "şu", "şöyle", "tüm", "tümü", "ya", "yani", "yok", "ve", "veya", "üzere"
+    "a",
+    "acaba",
+    "altı",
+    "ama",
+    "ancak",
+    "bazen",
+    "bazı",
+    "belki",
+    "ben",
+    "benden",
+    "beni",
+    "benim",
+    "bir",
+    "biraz",
+    "birçoğu",
+    "biri",
+    "birkaç",
+    "biz",
+    "bizden",
+    "bize",
+    "bizi",
+    "bizim",
+    "bu",
+    "bunun",
+    "bunu",
+    "bunu",
+    "her",
+    "herhangi",
+    "hem",
+    "hep",
+    "için",
+    "işte",
+    "kadar",
+    "karşı",
+    "kendi",
+    "kendine",
+    "ki",
+    "mı",
+    "mi",
+    "çok",
+    "çünkü",
+    "de",
+    "den",
+    "daha",
+    "diğer",
+    "ile",
+    "ilgili",
+    "çok",
+    "gibi",
+    "hem",
+    "henüz",
+    "hep",
+    "herhangi",
+    "hiç",
+    "iç",
+    "şu",
+    "şu",
+    "şöyle",
+    "tüm",
+    "tümü",
+    "ya",
+    "yani",
+    "yok",
+    "ve",
+    "veya",
+    "üzere",
 ]
 
 nltk.download("stopwords")
@@ -24,12 +85,16 @@ nltk.download("wordnet")
 stop_words = list(set(turkish_stop_words))
 lemmatizer = WordNetLemmatizer()
 
+
 def preprocess_text(text):
     text = text.lower()
-    text = text.translate(str.maketrans('', '', string.punctuation))
-    text = " ".join([lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words])
-    
+    text = text.translate(str.maketrans("", "", string.punctuation))
+    text = " ".join(
+        [lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words]
+    )
+
     return text
+
 
 app = FastAPI()
 
@@ -49,10 +114,15 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+
 def get_db_connection():
     try:
         connection = psycopg2.connect(
-            dbname="SuperFoodDb", user="postgres", password="1234", host="localhost", port="5432"
+            dbname="SuperFoodDb",
+            user="postgres",
+            password="1234",
+            host="localhost",
+            port="5432",
         )
         print("Successfully connected to the database!")
         return connection
@@ -60,11 +130,15 @@ def get_db_connection():
         print(f"Error connecting to the database: {e}")
         return None
 
-vectorizer = TfidfVectorizer(stop_words=turkish_stop_words, ngram_range=(1, 2), max_features=1000)
+
+vectorizer = TfidfVectorizer(
+    stop_words=turkish_stop_words, ngram_range=(1, 2), max_features=1000
+)
+
 
 def calculate_bmi(weight, height):
-    height_in_meters = height / 100 
-    bmi = weight / (height_in_meters ** 2)
+    height_in_meters = height / 100
+    bmi = weight / (height_in_meters**2)
     return bmi
 
 
@@ -79,7 +153,9 @@ def get_recommendations(user_id: int, ingredients: str):
     conn = get_db_connection()
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
-    query_ratings = f'SELECT RecipeId,Rating FROM "Ratings" WHERE UserId = {user_id}'
+    query_ratings = (
+        f'SELECT "RecipeId","Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
+    )
     df_ratings = pd.read_sql_query(query_ratings, conn)
 
     # Eğer kullanıcının favori yemekleri yoksa hata döndürelim
@@ -87,11 +163,13 @@ def get_recommendations(user_id: int, ingredients: str):
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     # Yemek tariflerini almak için veri çekme
-    query_recipes = "SELECT id, name, instructions, ingredients, calories FROM recipes"
+    query_recipes = (
+        'SELECT "id", "name", "instructions", "ingredients", "calories" FROM "recipes"'
+    )
     df_recipes = pd.read_sql_query(query_recipes, conn)
 
     # Kullanıcı bilgilerini almak (height, weight)
-    query_user = f"SELECT height, weight FROM Users WHERE id = {user_id}"
+    query_user = f'SELECT "height", "weight" FROM "Users" WHERE "id" = {user_id}'
     user_info = pd.read_sql_query(query_user, conn)
 
     conn.close()
@@ -99,7 +177,7 @@ def get_recommendations(user_id: int, ingredients: str):
     # Kullanıcı bilgilerini kontrol et
     if user_info.empty:
         raise HTTPException(status_code=404, detail="User information not found")
-    
+
     height = user_info.iloc[0]["height"]
     weight = user_info.iloc[0]["weight"]
 
@@ -122,14 +200,22 @@ def get_recommendations(user_id: int, ingredients: str):
     # --- Collaborative Filtering ---
 
     # Kullanıcılar arası benzerliği hesaplamak için user-item matrix oluşturma
-    user_item_matrix = pd.read_sql_query("SELECT UserId, RecipeId, Rating FROM Ratings", conn)
-    user_item_matrix = user_item_matrix.pivot(index='UserId', columns='RecipeId', values='Rating').fillna(0)
+    user_item_matrix = pd.read_sql_query(
+        'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"', conn
+    )
+    user_item_matrix = user_item_matrix.pivot(
+        index="UserId", columns="RecipeId", values="Rating"
+    ).fillna(0)
 
     # Kullanıcılar arası benzerlik matrisini hesaplama
     user_similarity_matrix = cosine_similarity(user_item_matrix)
 
     # Kullanıcı benzerliklerini DataFrame'e dönüştürme
-    user_similarity_df = pd.DataFrame(user_similarity_matrix, index=user_item_matrix.index, columns=user_item_matrix.index)
+    user_similarity_df = pd.DataFrame(
+        user_similarity_matrix,
+        index=user_item_matrix.index,
+        columns=user_item_matrix.index,
+    )
 
     # Kullanıcı benzerliklerini al
     user_similarities = user_similarity_df[user_id].sort_values(ascending=False)
@@ -141,13 +227,13 @@ def get_recommendations(user_id: int, ingredients: str):
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
         for recipe_id, rating in similar_user_ratings.items():
-            if rating >= 4 and recipe_id not in df_ratings['RecipeId'].values:
+            if rating >= 4 and recipe_id not in df_ratings["RecipeId"].values:
                 collaborative_recipes.append(recipe_id)
 
     # --- Combine Content-Based and Collaborative Filtering ---
 
     # Filtrelenen tarifleri DataFrame üzerinden al
-    filtered_recipes = df_recipes[df_recipes['RecipeId'].isin(collaborative_recipes)]
+    filtered_recipes = df_recipes[df_recipes["RecipeId"].isin(collaborative_recipes)]
 
     # Kullanıcının BMI'ye göre yemek filtreleme (örneğin, aşırı kalori önermemek)
     if bmi < 18.5:
@@ -155,7 +241,9 @@ def get_recommendations(user_id: int, ingredients: str):
         filtered_recipes = filtered_recipes[filtered_recipes["calories"] > 400]
     elif 18.5 <= bmi < 24.9:
         # Normal kilolu (BMI 18.5 - 24.9) için orta kalorili yemekler önerilebilir
-        filtered_recipes = filtered_recipes[(filtered_recipes["calories"] > 300) & (filtered_recipes["calories"] < 700)]
+        filtered_recipes = filtered_recipes[
+            (filtered_recipes["calories"] > 300) & (filtered_recipes["calories"] < 700)
+        ]
     elif 25 <= bmi < 29.9:
         # Fazla kilolu (BMI 25 - 29.9) için daha düşük kalorili yemekler önerilebilir
         filtered_recipes = filtered_recipes[filtered_recipes["calories"] < 500]
@@ -169,7 +257,9 @@ def get_recommendations(user_id: int, ingredients: str):
     ) / 2
 
     # Sonuçları sıralayarak en iyi 4 yemeği al
-    filtered_recipes = filtered_recipes.sort_values(by="final_similarity", ascending=False).head(4)
+    filtered_recipes = filtered_recipes.sort_values(
+        by="final_similarity", ascending=False
+    ).head(4)
 
     # Formatta sonucu hazırlama
     recommendations = [
@@ -179,7 +269,9 @@ def get_recommendations(user_id: int, ingredients: str):
             "calories": row["calories"],
             "ingredients": row["ingredients"],
             "instructions": row["instructions"],
-            "image_url": row.get("imageUrl", None),  # Görüntü URL'si eklenmişse kullanılır
+            "image_url": row.get(
+                "imageUrl", None
+            ),  # Görüntü URL'si eklenmişse kullanılır
         }
         for _, row in filtered_recipes.iterrows()
     ]
@@ -213,7 +305,7 @@ def get_recommendations(user_id: int, ingredients: str):
 #     # Kullanıcı bilgilerini kontrol et
 #     if user_info.empty:
 #         raise HTTPException(status_code=404, detail="User information not found")
-    
+
 #     height = user_info.iloc[0]["height"]
 #     weight = user_info.iloc[0]["weight"]
 
