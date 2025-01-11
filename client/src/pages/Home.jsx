@@ -74,33 +74,49 @@ function Home() {
           ))}
         </Row>
       </Container>
-      <div style={{ position: "relative" }}>
-        <button onClick={handleSearch}>
-          <CiSearch />
-        </button>
-        <input
-          type="text"
-          placeholder="Tavuk göğsü, mantar, kabak, domates, fesleğen, bal, soya sosu, sarımsak ve taze otlar ile yapılabilecek lezzetli yemek tarifleri oluştur.."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "7%",
+          left: "77.8%",
+          color: "black",
+          zIndex: "100",
+        }}
+      >
+        <button
+          onClick={handleSearch}
           style={{
-            position: "fixed",
-            bottom: "15px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            padding: "15px 40px 15px 15px",
-            fontSize: "16px",
-            width: "60%",
-            color: "black",
-            backgroundColor: "white",
-            border: "1px solid #ccc",
-            borderRadius: "50px",
-            outline: "none",
-            textAlign: "center",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            background: "none",
+            border: "none",
+            padding: "0",
+            cursor: "pointer",
           }}
-        />
+        >
+          <CiSearch className="fs-4 text-dark fw-bolder" />
+        </button>
       </div>
+      <input
+        type="text"
+        placeholder="Tavuk göğsü, mantar, kabak, domates, fesleğen, bal, soya sosu, sarımsak ve taze otlar ile yapılabilecek lezzetli yemek tarifleri oluştur.."
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        style={{
+          position: "fixed",
+          bottom: "35px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "15px 40px 15px 15px",
+          fontSize: "16px",
+          width: "60%",
+          color: "black",
+          backgroundColor: "white",
+          border: "1px solid #ccc",
+          borderRadius: "50px",
+          outline: "none",
+          textAlign: "center",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+      />
     </div>
   );
 }

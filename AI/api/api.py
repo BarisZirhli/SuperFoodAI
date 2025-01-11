@@ -9,6 +9,7 @@ from nltk.stem import WordNetLemmatizer
 import string
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
+from scipy.stats import pearsonr
 
 turkish_stop_words = [
     "a",
@@ -166,7 +167,7 @@ def get_recommendations(user_id: int, ingredients: str):
     conn = get_db_engine()
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
-    query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
+    query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"'
 
     df_ratings = pd.read_sql(query_ratings, conn)
     print(f"Df_ratings: {df_ratings}")
@@ -199,7 +200,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Yemeklerin içerik benzerliğini hesaplamak için TF-IDF
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
-    tfidf_matrix = tfidf_vectorizer.fit_transform(df_recipes["instructions"])
+    tfidf_matrix = tfidf_vectorizer.fit_transform(df_recipes["instructions"] + df_recipes["ingredients"])
     print(f"Tf idf matrix: {tfidf_matrix}")
     # Kullanıcı sorgusuna göre içerik benzerliği hesapla (ingredients bazlı)
     query_vector = tfidf_vectorizer.transform([user_query])
@@ -210,7 +211,6 @@ def get_recommendations(user_id: int, ingredients: str):
     df_recipes["content_similarity"] = ingredient_similarities[0]
     print(f"Ingredients similarity:  {ingredient_similarities[0]}")
     # --- Collaborative Filtering ---
-
     user_item_matrix = df_ratings.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
@@ -218,7 +218,8 @@ def get_recommendations(user_id: int, ingredients: str):
     print(f" User item matrix: {user_item_matrix}")
     # Kullanıcılar arası benzerlik matrisini hesaplama
     user_similarity_matrix = cosine_similarity(user_item_matrix)
-    print(f"User similarity matrix: {user_similarity_matrix}")
+
+    print(user_similarity_matrix)
     # Kullanıcı benzerliklerini DataFrame'e dönüştürme
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
@@ -227,19 +228,17 @@ def get_recommendations(user_id: int, ingredients: str):
     )
     print(f"User similarity df : {user_similarity_df}")
 
-    # Kullanıcı benzerliklerini al
-    currentUser = 1
-    user_similarities = user_similarity_df[currentUser].sort_values(ascending=False)
+    user_similarities = user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
     print(f"User similarities: {user_similarities}")
     # Benzer kullanıcılardan önerilen yemekleri al
 
-    similar_users = user_similarities.index[1:3]
+    similar_users = user_similarities.index[1:5]
     print(f"Similar users: {similar_users}")
 
     collaborative_recipes = []
 
     # Mevcut kullanıcının tarifleri
-    current_user_ratings = user_item_matrix.loc[currentUser]
+    current_user_ratings = user_item_matrix.loc[user_id]
 
     # Benzer kullanıcıların tariflerini kontrol et
     for similar_user in similar_users:
@@ -296,10 +295,10 @@ def get_recommendations(user_id: int, ingredients: str):
         filtered_recipes = filtered_recipes[filtered_recipes["calories"] < 400]
 
     # Content ve collaborative filtering'i birleştirerek sıralama yap
-    """    filtered_recipes["final_similarity"] = (
+    filtered_recipes["final_similarity"] = (
             filtered_recipes["content_similarity"] + filtered_recipes["content_similarity"]
         ) / 2
-    """
+
     # Sonuçları sıralayarak en iyi 4 yemeği al
     filtered_recipes = filtered_recipes.sort_values(
         by="final_similarity", ascending=False
@@ -317,7 +316,7 @@ def get_recommendations(user_id: int, ingredients: str):
         }
         for _, row in filtered_recipes.iterrows()
     ]
-    print(f"Recommendations: {recommendations}")
+    print(f"Tavsiyeler bunlar: {recommendations}")
     return recommendations
 
 

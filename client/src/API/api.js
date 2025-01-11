@@ -51,7 +51,7 @@ export const fetchRecipesWithUser = async (query) => {
     const user_id = token.userId;
 
     const response = await axios.get("http://localhost:8000/search", {
-      params: { ingredients: query,user_id :user_id},
+      params: { ingredients: query, user_id: user_id },
     });
 
     return response.data;
@@ -60,7 +60,6 @@ export const fetchRecipesWithUser = async (query) => {
     return [];
   }
 };
-
 
 export const addFavoriteRecipes = async (recipeId) => {
   try {

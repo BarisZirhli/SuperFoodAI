@@ -31,6 +31,7 @@ const Signup = () => {
     if (!formData.height) newErrors.height = "Height is required!";
     if (!formData.weight) newErrors.weight = "Weight is required!";
     if (!formData.gender) newErrors.gender = "Gender is required!";
+    if (!formData.age) newErrors.age = "Age is required!";
     if (!formData.email) {
       newErrors.email = "Email is required!";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -77,9 +78,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="container registerContainer mt-5 d-flex flex-column justify-content-center bg-light p-3 px-5 rounded">
+    <div className="container registerContainer d-flex flex-column justify-content-center bg-light p-5 px-5 rounded">
       <div>
-        <h2 className="mb-4 text-center">Register</h2>
+        <h2 className="mb-4 fs-4 text-center">Register to SuperFoodAI</h2>
         {success && <Alert variant="success">Registration successful!</Alert>}
         <Form
           onSubmit={handleSubmit}
@@ -127,6 +128,7 @@ const Signup = () => {
                   value={formData.email}
                   onChange={handleChange}
                   isInvalid={!!errors.email}
+                  className="w-100"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.email}
@@ -147,7 +149,7 @@ const Signup = () => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-
+            {/* Right Section */}
             <Col md={6}>
               <Form.Group className="mb-2" controlId="formWeight">
                 <Form.Label>Weight</Form.Label>
@@ -209,7 +211,7 @@ const Signup = () => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-            <Col>
+            <Col md={6}>
               <Form.Group className="mb-2" controlId="formConfirmPassword">
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
@@ -223,12 +225,16 @@ const Signup = () => {
                 <Form.Control.Feedback type="invalid">
                   {errors.confirmPassword}
                 </Form.Control.Feedback>
-              </Form.Group></Col>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group className="mb-2 mt-3 mx-2" controlId="formConfirmPassword">
+                <Button className="btn btn-secondary mt-3" type="submit">
+                  Register
+                </Button>
+              </Form.Group>
+            </Col>
           </Row>
-
-          <Button className="btn btn-secondary mt-3" type="submit">
-            Register
-          </Button>
         </Form>
       </div>
     </div>

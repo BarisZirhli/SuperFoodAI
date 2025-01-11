@@ -53,7 +53,7 @@ const Login = () => {
         if (response.status == "success") {
           setSuccess(true);
           localStorage.setItem("authToken", response.token);
-          setIsLoggedIn(true); 
+          setIsLoggedIn(true);
           setSuccessMessage("Login successful!");
           tokenToId();
           console.log(tokenToId());
@@ -79,12 +79,10 @@ const Login = () => {
   }, [isLoggedIn, navigate]);
 
   return (
-    <div className="container registerContainer mt-5 d-flex flex-column justify-content-center bg-light p-3 px-5 rounded">
-      <div>
+    <div className="container registerContainer mt-5 d-flex flex-column justify-content-center bg-light p-5 px-5 rounded">
+      <div className="p-3">
         <h2 className="mb-4 text-center">Login</h2>
-        {success && (
-          <Alert variant="success">Login successful!</Alert>
-        )}
+        {success && <Alert variant="success">Login successful!</Alert>}
         {errorMessage && !success && (
           <Alert variant="danger">{errorMessage}</Alert>
         )}
@@ -125,12 +123,12 @@ const Login = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Button className="btn btn-primary mt-3" type="submit">
+          <Button className="btn btn-dark mt-2" type="submit">
             Login
           </Button>
         </Form>
 
-        <div className="mt-3 text-center">
+        <div className="mt-5 text-center">
           <span>Don't have an account? </span>
           <a href="/signup" className="text-decoration-none">
             Sign Up

@@ -17,6 +17,19 @@ const addRating = async (req, res) => {
       });
     }
 
+    const existingRating = await Rating.findOne({
+      where: {
+        UserId: userId,
+        RecipeId: recipeId,
+      },
+    });
+
+    if (existingRating) {
+      return res.status(400).send({
+        message: "User has already rated this recipe.",
+      });
+    }
+
     const ratingFood = await Rating.create({
       UserId: userId,
       RecipeId: recipeId,
