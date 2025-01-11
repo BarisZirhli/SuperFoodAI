@@ -258,7 +258,7 @@ def get_recommendations(user_id: int, ingredients: str):
         for recipe_id in collaborative_recipes:
             # SQL sorgusunu oluştur
             query_recommend_recipes = f"""
-                SELECT * FROM "Recipes" WHERE "RecipeId" = {recipe_id}
+                SELECT * FROM "Recipes" WHERE "id" = {recipe_id}
             """
 
     try:
