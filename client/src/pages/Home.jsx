@@ -5,12 +5,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/Home.css";
 import { fetchRecipesWithUser } from "../API/api";
 import { useNavigate } from "react-router-dom";
+import { CiSearch } from "react-icons/ci";
 
 function Home() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,12 +45,16 @@ function Home() {
     fetchRecipesData();
   }, [query]);
 
+  const handleSearch = () => {
+    setQuery(searchInput);
+  };
+
   return (
     <div className="recipeListContainer">
       {loading && <p style={{ textAlign: "center" }}>Yükleniyor...</p>}
       {error && <p>{error}</p>}
       <Container>
-      <Row className="justify-content-center">
+        <Row className="justify-content-center">
           {recipes.map((recipe) => (
             <Col xs={12} sm={6} md={3} lg={3} key={recipe.name}>
               <RecipeCard
@@ -69,11 +75,14 @@ function Home() {
         </Row>
       </Container>
       <div style={{ position: "relative" }}>
+        <button onClick={handleSearch}>
+          <CiSearch />
+        </button>
         <input
           type="text"
           placeholder="Tavuk göğsü, mantar, kabak, domates, fesleğen, bal, soya sosu, sarımsak ve taze otlar ile yapılabilecek lezzetli yemek tarifleri oluştur.."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           style={{
             position: "fixed",
             bottom: "15px",

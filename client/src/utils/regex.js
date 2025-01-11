@@ -15,9 +15,12 @@ export const parseIngredients = (ingredients) => {
   };
   
   export const parseImageUrls = (image) => {
-    return image
-      .replace(/^c\(/, "")
-      .replace(/\)$/, "")
-      .split(/",\s*"/)
-      .map((url) => url.replace(/"/g, "").trim());
+    if (image.startsWith("c(")) {
+      return image
+        .replace(/^c\(/, "")
+        .replace(/\)$/, "")
+        .split(/",\s*"/)
+        .map((url) => url.replace(/"/g, "").trim());
+    }
+    return [image.trim()];
   };

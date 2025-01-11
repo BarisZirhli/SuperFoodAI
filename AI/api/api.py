@@ -163,17 +163,19 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
     query_ratings = (
-        f'SELECT "RecipeId","Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
+     f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
     )
+    
     df_ratings = pd.read_sql(query_ratings, conn)
     print(f"Df_ratings: {df_ratings}")
+    print(df_ratings.columns)
     # Eğer kullanıcının favori yemekleri yoksa hata döndürelim
     if df_ratings.empty:
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     # Yemek tariflerini almak için veri çekme
     query_recipes = (
-        'SELECT "id", "name", "instructions", "ingredients", "calories" FROM "Recipes"'
+        'SELECT "id", "name", "instructions", "ingredients", "calories", "imageUrl" FROM "Recipes"'
     )
     df_recipes = pd.read_sql(query_recipes, conn)
     print(f" Df_recipes: {df_recipes}")
@@ -191,63 +193,93 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # BMI hesapla
     bmi = calculate_bmi(weight, height)
+    print(f"BMI: {bmi}")
 
     # --- Content-Based Filtering ---
 
     # Yemeklerin içerik benzerliğini hesaplamak için TF-IDF
     tfidf_vectorizer = TfidfVectorizer(stop_words="english")
     tfidf_matrix = tfidf_vectorizer.fit_transform(df_recipes["instructions"])
-
+    print(f"Tf idf matrix: {tfidf_matrix}")
     # Kullanıcı sorgusuna göre içerik benzerliği hesapla (ingredients bazlı)
     query_vector = tfidf_vectorizer.transform([user_query])
+    print(f"Query vector: {query_vector}")
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
-
+    print(f"Ingredients similarities: {ingredient_similarities}")
     # Content similarity'yi DataFrame'e ekle
     df_recipes["content_similarity"] = ingredient_similarities[0]
-
+    print(f"Ingredients similarity:  {ingredient_similarities[0]}")
     # --- Collaborative Filtering ---
 
-    # Kullanıcılar arası benzerliği hesaplamak için user-item matrix oluşturma
-    user_item_matrix = pd.read_sql(
-        'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"', conn
-    )
-    user_item_matrix = user_item_matrix.pivot(
+    user_item_matrix = df_ratings.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
-
+    
     print(f" User item matrix: {user_item_matrix}")
     # Kullanıcılar arası benzerlik matrisini hesaplama
     user_similarity_matrix = cosine_similarity(user_item_matrix)
-
+    print(f"User similarity matrix: {user_similarity_matrix}")
     # Kullanıcı benzerliklerini DataFrame'e dönüştürme
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
         index=user_item_matrix.index,
         columns=user_item_matrix.index,
     )
+    print(f"User similarity df : {user_similarity_df}")
 
     # Kullanıcı benzerliklerini al
-    user_similarities = user_similarity_df[user_id].sort_values(ascending=False)
-
+    currentUser = 1
+    user_similarities = user_similarity_df[currentUser].sort_values(ascending=False)
+    print(f"DF Similarity current user: {user_similarity_df[currentUser]}")
+    print(f"User similarities: {user_similarities}")
     # Benzer kullanıcılardan önerilen yemekleri al
-    similar_users = user_similarities.index[1:4]  # En yakın 3 kullanıcıyı al
+
+    similar_users = user_similarities.index[1:2]
+    print(f"Similar users: {similar_users}")
     collaborative_recipes = []
 
+# Mevcut kullanıcının tarifleri
+    current_user_ratings = user_item_matrix.loc[currentUser]
+
+# Benzer kullanıcıların tariflerini kontrol et
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
-        for recipe_id, rating in similar_user_ratings.items():
-            if rating >= 4 and recipe_id not in df_ratings['RecipeId'].values:
+        for recipe_id in similar_user_ratings.items():
+            # Kullanıcının zaten değerlendirdiği tarifleri atla
+            if recipe_id not in current_user_ratings.index or current_user_ratings[recipe_id] == 0:
                 collaborative_recipes.append(recipe_id)
-    print(f"Colloborative matrix: {collaborative_recipes}")
-    # --- Combine Content-Based and Collaborative Filtering ---
+    print(f"Collaborative recipes: {collaborative_recipes}")    
+    recommendations = []
 
-    # Filtrelenen tarifleri DataFrame üzerinden al
-    filtered_recipes = df_recipes[df_recipes['RecipeId'].isin(collaborative_recipes)]
+# Eğer collaborative_recipes boşsa, işlem yapma
+    if collaborative_recipes:
+            for recipe_id in collaborative_recipes:
+            # SQL sorgusunu oluştur
+                query_recommend_recipes = f'''
+                SELECT * FROM "Recipes" WHERE "RecipeId" = {recipe_id}
+            '''
+        
+    try:
+            # SQL sorgusunu çalıştır ve sonucu pandas DataFrame olarak al
+            recipe_data = pd.read_sql(query_recommend_recipes, conn)
+            
+            # Eğer veri varsa, veriyi ekle
+            if not recipe_data.empty:
+                recommendations.append(recipe_data)
+    except Exception as e:
+            print(f"Error fetching data for RecipeId {recipe_id}: {e}")
+    else:
+        print("No collaborative recipes to recommend.")
 
-    # Kullanıcının BMI'ye göre yemek filtreleme (örneğin, aşırı kalori önermemek)
+    # Sonuçları yazdırma
+    print("Recommendations:")
+    for recipe in recommendations:
+        print(recipe)
+
+    
     if bmi < 18.5:
         # Zayıf (BMI < 18.5) için daha yüksek kalorili yemekler önerilebilir
-        filtered_recipes = filtered_recipes[filtered_recipes["calories"] > 400]
+        filtered_recipes = filtered_recipes['calories'] > 400
     elif 18.5 <= bmi < 24.9:
         # Normal kilolu (BMI 18.5 - 24.9) için orta kalorili yemekler önerilebilir
         filtered_recipes = filtered_recipes[
@@ -278,13 +310,11 @@ def get_recommendations(user_id: int, ingredients: str):
             "calories": row["calories"],
             "ingredients": row["ingredients"],
             "instructions": row["instructions"],
-            "image_url": row.get(
-                "imageUrl", None
-            ),  # Görüntü URL'si eklenmişse kullanılır
+            "imageUrl": row.get("imageUrl", None),
         }
         for _, row in filtered_recipes.iterrows()
     ]
-
+    print(f"Recommendations: {recommendations}")
     return recommendations
 
 

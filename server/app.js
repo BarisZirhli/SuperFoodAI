@@ -3,7 +3,7 @@ const cors = require("cors");
 const { syncDB } = require("./models");
 const authRoutes = require("./routes/authRoutes");
 const favoriteRoutes = require("./routes/favoriteRoutes");
-
+const ratingRoutes = require("./routes/ratingRoutes")
 const app = express();
 const PORT = 3000;
 
@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/favorite", favoriteRoutes); 
+app.use("/api/rating", ratingRoutes); 
 
 app.use("*", (req, res) => {
   res.status(404).json({
