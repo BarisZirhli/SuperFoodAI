@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
@@ -69,7 +69,7 @@ function FavoriteRecipeCard({
             backfaceVisibility: "hidden",
             borderRadius: "10px",
             display: "grid",
-            gap: "60px",
+            gap:"10px",
             marginLeft: "10px",
             marginRight: "10px",
           }}
@@ -79,28 +79,49 @@ function FavoriteRecipeCard({
             src={firstImage}
             alt={title}
             style={{
-              height: "200px",
+              height: "230px",
               objectFit: "cover",
               borderRadius: "10px 10px 0 0",
             }}
           />
           <Card.Body>
-            <Card.Title>{title}</Card.Title>
-            <Card.Text>
+            <Card.Title className="cardTitle">{title}</Card.Title>
+            <Card.Text className="caloriesCard">
               <strong>Calories:</strong> {calories} kcal
             </Card.Text>
-            <button
+            {/* Rating Section */}
+            <div className="d-flex justify-content-center mb-5">
+              <div className="text-center mb-2">
+                <div className="rating">
+                  {[5, 4, 3, 2, 1].map((value) => (
+                    <React.Fragment key={value}>
+                      <input
+                        type="radio"
+                        name="rating"
+                        value={value}
+                        id={`rating-${value}`}
+                      />
+                      <label htmlFor={`rating-${value}`}>☆</label>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <Button
               style={{
                 all: "unset",
                 cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
+                position: "absolute",
+                bottom: "6.5px",
+                left:"44%",
                 justifyContent: "center",
               }}
               onClick={handleHeartClick}
             >
               <FaHeart style={{ fontSize: "50px", color: "red" }} />
-            </button>
+            </Button>
           </Card.Body>
         </Card>
         <Card
@@ -113,6 +134,7 @@ function FavoriteRecipeCard({
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
+            paddingBottom: "10px",
           }}
         >
           <Card.Body className="card-body">
