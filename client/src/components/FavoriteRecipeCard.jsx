@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import "../css/RecipeCard.css";
-import { IoHeartCircleOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
+import "../css/FavoriteRecipeCard.css";
 
 import {
   parseIngredients,
@@ -98,9 +99,7 @@ function FavoriteRecipeCard({
               }}
               onClick={handleHeartClick}
             >
-              <IoHeartCircleOutline
-                style={{ fontSize: "60px", backgroundColor: "red" }}
-              />
+              <FaHeart style={{ fontSize: "50px", color: "red" }} />
             </button>
           </Card.Body>
         </Card>
