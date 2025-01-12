@@ -122,7 +122,7 @@ def get_db_connection():
         connection = psycopg2.connect(
             dbname="SuperFoodDb",
             user="postgres",
-            password="mitaka",
+            password="1234",
             host="localhost",
             port="5432",
         )

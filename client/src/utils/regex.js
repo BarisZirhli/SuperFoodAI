@@ -19,9 +19,14 @@ export const parseInstructions = (instructions) => {
 };
 
 export const parseImageUrls = (image) => {
+  if (!image || typeof image !== 'string') {
+    console.warn('Invalid input passed to parseImageUrls:', image);
+    return []; // Varsayılan olarak boş bir dizi döndür
+  }
+
   return image
-    .replace(/^c\(/, "") // "c(" ifadesini kaldır
-    .replace(/\)$/, "") // Kapanış parantezini kaldır
-    .split(/,\s*(?=https?:\/\/)/) // URL'leri virgülle ayır
-    .map((url) => url.trim()); // Her URL'yi temizle
+    .replace(/^c\(/, "") // Başındaki "c(" kısmını kaldır
+    .replace(/\)$/, "")  // Sonundaki ")" kısmını kaldır
+    .split(/",\s*"/)     // Çift tırnak ve virgülle böl
+    .map((url) => url.replace(/"/g, "").trim()); // Her bir URL'yi temizle
 };
