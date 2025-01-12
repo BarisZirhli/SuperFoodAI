@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Alert } from "react-bootstrap";
 import "../css/RecipeCard.css";
 import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
@@ -8,7 +8,7 @@ import "../css/FavoriteRecipeCard.css";
 import {
   parseIngredients,
   parseInstructions,
-  parseImageUrls,
+  parseImageUrls
 } from "../utils/regex";
 
 function FavoriteRecipeCard({
@@ -18,10 +18,12 @@ function FavoriteRecipeCard({
   cookTime,
   ingredients,
   instructions,
-  image,
+  image
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
+  const [rating, setRating] = useState(null);
+
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
@@ -29,16 +31,15 @@ function FavoriteRecipeCard({
   const handleHeartClick = async (e) => {
     e.stopPropagation();
 
-    console.log("Heart button clicked! Recipe ID:", recipeId);
     try {
       const response = await deleteFavoriteRecipe(recipeId);
-      if (response && response.message) {
-        setMessage(response.message);
-      } else {
-        setMessage("Recipe removed from favorites!");
-      }
+      setMessage(
+        response && response.message
+          ? response.message
+          : "Recipe removed from favorites!"
+      );
     } catch (error) {
-      console.error(`${error}`);
+      console.error(error);
       setMessage("An error occurred while removing the recipe.");
     }
   };
@@ -53,25 +54,25 @@ function FavoriteRecipeCard({
       <div
         onClick={handleCardClick}
         style={{
-          width: "20rem",
+          width: "16rem",
           height: "30rem",
           borderRadius: "10px",
           cursor: "pointer",
+          display: "grid",
+          gap: "20px",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
         }}
       >
         <Card
-          className="text-center"
+          className="card"
           style={{
             height: "100%",
             backfaceVisibility: "hidden",
             borderRadius: "10px",
             display: "grid",
-            gap:"10px",
-            marginLeft: "10px",
-            marginRight: "10px",
+            gap: "20px"
           }}
         >
           <Card.Img
@@ -79,34 +80,36 @@ function FavoriteRecipeCard({
             src={firstImage}
             alt={title}
             style={{
-              height: "230px",
+              height: "250px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0",
+              borderRadius: "10px 10px 0 0"
             }}
           />
-          <Card.Body>
+          <Card.Body className="cardBody">
             <Card.Title className="cardTitle">{title}</Card.Title>
             <Card.Text className="caloriesCard">
               <strong>Calories:</strong> {calories} kcal
             </Card.Text>
+
             {/* Rating Section */}
             <div className="d-flex justify-content-center mb-5">
-              <div className="text-center mb-2">
-                <div className="rating">
-                  {[5, 4, 3, 2, 1].map((value) => (
-                    <React.Fragment key={value}>
-                      <input
-                        type="radio"
-                        name="rating"
-                        value={value}
-                        id={`rating-${value}`}
-                      />
-                      <label htmlFor={`rating-${value}`}>☆</label>
-                    </React.Fragment>
-                  ))}
-                </div>
+              <div className="rating">
+                {[5, 4, 3, 2, 1].map((value) => (
+                  <React.Fragment key={value}>
+                    <input
+                      type="radio"
+                      name="rating"
+                      value={value}
+                      id={`rating-${value}`}
+                      onChange={() => setRating(value)}
+                      checked={rating == value}
+                    />
+                    <label htmlFor={`rating-${value}`}>☆</label>
+                  </React.Fragment>
+                ))}
               </div>
             </div>
+
             <Button
               style={{
                 all: "unset",
@@ -115,15 +118,17 @@ function FavoriteRecipeCard({
                 alignItems: "center",
                 position: "absolute",
                 bottom: "6.5px",
-                left:"44%",
-                justifyContent: "center",
+                left: "44%",
+                justifyContent: "center"
               }}
               onClick={handleHeartClick}
+              aria-label="Remove from favorites"
             >
               <FaHeart style={{ fontSize: "50px", color: "red" }} />
             </Button>
           </Card.Body>
         </Card>
+
         <Card
           className="text-center"
           style={{
@@ -134,23 +139,19 @@ function FavoriteRecipeCard({
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
-            paddingBottom: "10px",
+            paddingBottom: "10px"
           }}
         >
-          <Card.Body className="card-body">
+          <Card.Body>
             <Card.Title>Ingredients</Card.Title>
             <ul style={{ textAlign: "left" }}>
               {ingredientList.map((ingredient, index) => (
-                <li
-                  style={{
-                    listStyleType: "none",
-                  }}
-                  key={index}
-                >
+                <li key={index} style={{ listStyleType: "none" }}>
                   {ingredient}
                 </li>
               ))}
             </ul>
+
             <Card.Title>Instructions</Card.Title>
             <ol style={{ textAlign: "left" }}>
               {instructionList.map((instruction, index) => (
@@ -160,6 +161,9 @@ function FavoriteRecipeCard({
           </Card.Body>
         </Card>
       </div>
+
+      {/* Message Display */}
+      {message && <Alert variant="info">{message}</Alert>}
     </div>
   );
 }

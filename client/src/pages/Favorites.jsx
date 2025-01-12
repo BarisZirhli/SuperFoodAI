@@ -45,9 +45,9 @@ const Favorites = () => {
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
         Favorite Recipes
       </h1>
-      <Row className="g-4">
+      <Row className="container-row">
         {currentItems.map((recipe) => (
-          <Col key={recipe.id} sm={12} md={6} lg={4} xl={3}>
+          <Col key={recipe.id} sm={10} md={6} lg={4} xl={3}>
             <FavoriteRecipeCard
               recipeId={recipe.id}
               title={recipe.name}

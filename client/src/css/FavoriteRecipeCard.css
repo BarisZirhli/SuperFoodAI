@@ -1,65 +1,73 @@
+body {
+  margin: auto;
+  padding: 0;
+}
+
 .rate {
-    border-bottom-right-radius: 12px;
-    border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 
 .rating {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: center;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
 }
 
-.rating>input {
-    display: none;
+.rating > input {
+  display: none;
 }
 
-.rating>label {
-    position: relative;
-    width: 1em;
-    font-size: 30px;
-    font-weight: 300;
-    color: #ffd600;
-    cursor: pointer;
+.rating > label {
+  position: relative;
+  width: 1.4em;
+  font-size: 30px;
+  font-weight: 300;
+  color: #96af25;
+  cursor: pointer;
 }
 
-.rating>label::before {
-    content: "\2605";
-    position: absolute;
-    opacity: 0;
+.rating > label::before {
+  content: '\2605';
+  position: absolute;
+  opacity: 0;
 }
 
-.rating>label:hover:before,
-.rating>label:hover~label:before {
-    opacity: 1 !important;
+.rating > label:hover:before,
+.rating > label:hover ~ label:before {
+  opacity: 1 !important;
 }
 
-.rating>input:checked~label:before {
-    opacity: 1;
+.rating > input:checked ~ label:before {
+  opacity: 1;
 }
 
-.rating:hover>input:checked~label:before {
-    opacity: 0.4;
-}
-
-.buttons {
-    top: 10px;
-    position: relative;
+.rating:hover > input:checked ~ label:before {
+  opacity: 0.4;
 }
 
 .rating-submit {
-    border-radius: 8px;
-    color: #fff;
-    height: auto;
+  border-radius: 8px;
+  color: #fff;
+  height: auto;
 }
 
 .rating-submit:hover {
-    color: #fff;
+  color: #fff;
 }
 
 .caloriesCard {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .cardTitle {
-    font-size: 18px;
+  font-size: 18px;
+}
+.cardBody {
+  margin-left: 50px;
+}
+.card {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
 }
