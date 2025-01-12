@@ -167,11 +167,8 @@ def get_recommendations(user_id: int, ingredients: str):
     conn = get_db_engine()
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
-<<<<<<< HEAD
+
     query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"'
-=======
-    query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings" '
->>>>>>> e6fde96f0a42bcc1ce906e90ac41f12a233b2074
 
     df_ratings = pd.read_sql(query_ratings, conn)
     print(f"Df_ratings: {df_ratings}")
@@ -204,7 +201,9 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Yemeklerin içerik benzerliğini hesaplamak için TF-IDF
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
-    tfidf_matrix = tfidf_vectorizer.fit_transform(df_recipes["instructions"] + df_recipes["ingredients"])
+    tfidf_matrix = tfidf_vectorizer.fit_transform(
+        df_recipes["instructions"] + df_recipes["ingredients"]
+    )
     print(f"Tf idf matrix: {tfidf_matrix}")
     # Kullanıcı sorgusuna göre içerik benzerliği hesapla (ingredients bazlı)
     query_vector = tfidf_vectorizer.transform([user_query])
@@ -232,7 +231,9 @@ def get_recommendations(user_id: int, ingredients: str):
     )
     print(f"User similarity df : {user_similarity_df}")
 
-    user_similarities = user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
+    user_similarities = (
+        user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
+    )
     print(f"User similarities: {user_similarities}")
     # Benzer kullanıcılardan önerilen yemekleri al
 
@@ -300,8 +301,8 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Content ve collaborative filtering'i birleştirerek sıralama yap
     filtered_recipes["final_similarity"] = (
-            filtered_recipes["content_similarity"] + filtered_recipes["content_similarity"]
-        ) / 2
+        filtered_recipes["content_similarity"] + filtered_recipes["content_similarity"]
+    ) / 2
 
     # Sonuçları sıralayarak en iyi 4 yemeği al
     filtered_recipes = filtered_recipes.sort_values(
