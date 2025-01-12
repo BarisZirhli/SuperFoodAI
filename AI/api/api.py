@@ -121,7 +121,7 @@ def get_db_connection():
         connection = psycopg2.connect(
             dbname="SuperFoodDb",
             user="postgres",
-            password="1234",
+            password="mitaka",
             host="localhost",
             port="5432",
         )
@@ -166,7 +166,7 @@ def get_recommendations(user_id: int, ingredients: str):
     conn = get_db_engine()
 
     # Kullanıcıya ait rating verilerini sorgula (favori yemekler)
-    query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings" WHERE "UserId" = {user_id}'
+    query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings" '
 
     df_ratings = pd.read_sql(query_ratings, conn)
     print(f"Df_ratings: {df_ratings}")
