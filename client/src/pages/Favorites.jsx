@@ -49,6 +49,7 @@ const Favorites = () => {
         {currentItems.map((recipe) => (
           <Col key={recipe.id} sm={10} md={6} lg={4} xl={3}>
             <FavoriteRecipeCard
+              key={recipe.id}
               recipeId={recipe.id}
               title={recipe.name}
               calories={recipe.calories}
@@ -56,6 +57,7 @@ const Favorites = () => {
               ingredients={recipe.ingredients}
               instructions={recipe.instructions}
               image={recipe.imageUrl}
+              avgRate={recipe.avgRate}
             />
           </Col>
         ))}

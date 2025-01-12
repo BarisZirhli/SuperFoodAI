@@ -64,11 +64,7 @@ function Home() {
                 calories={recipe.calories}
                 ingredients={recipe.ingredients}
                 instructions={recipe.instructions}
-                image={
-                  Array.isArray(recipe.image_url)
-                    ? recipe.image_url[0]
-                    : recipe.image_url
-                }
+                image={recipe.imageUrl}
               />
             </Col>
           ))}

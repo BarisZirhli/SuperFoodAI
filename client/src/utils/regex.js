@@ -9,24 +9,19 @@ export const parseIngredients = (ingredients) => {
 
 export const parseInstructions = (instructions) => {
   return instructions
-    .replace(/^C\s*\(/, "") // Başındaki "C (" kısmını kaldır
-    .replace(/\)$/, "") // Sonundaki ")" kısmını kaldır
-    .replace(/,\s*$/, "") // Cümle sonlarındaki gereksiz virgülleri kaldır
-    .replace(/([a-zA-Z0-9])\./g, "$1.") // Noktalama hatalarını düzelt
-    .split(/\.(?!\s*\d)/) // Noktalara göre ayır
-    .map((step) => step.trim()) // Başlangıç ve son boşlukları temizle
-    .filter((step) => step.length >= 1); // Boş maddeleri kaldır
+    .replace(/^C\s*\(/, "")
+    .replace(/\)$/, "")
+    .replace(/,\s*$/, "") 
+    .replace(/([a-zA-Z0-9])\./g, "$1.")
+    .split(/\.(?!\s*\d)/)
+    .map((step) => step.trim()) 
+    .filter((step) => step.length >= 1);
 };
 
 export const parseImageUrls = (image) => {
-  if (!image || typeof image !== 'string') {
-    console.warn('Invalid input passed to parseImageUrls:', image);
-    return []; // Varsayılan olarak boş bir dizi döndür
-  }
-
   return image
-    .replace(/^c\(/, "") // Başındaki "c(" kısmını kaldır
-    .replace(/\)$/, "")  // Sonundaki ")" kısmını kaldır
-    .split(/",\s*"/)     // Çift tırnak ve virgülle böl
-    .map((url) => url.replace(/"/g, "").trim()); // Her bir URL'yi temizle
+    .replace(/^c\(/, "") // "c(" ifadesini kaldır
+    .replace(/\)$/, "") // Kapanış parantezini kaldır
+    .split(/,\s*(?=https?:\/\/)/) // URL'leri virgülle ayır
+    .map((url) => url.trim()); // Her URL'yi temizle
 };

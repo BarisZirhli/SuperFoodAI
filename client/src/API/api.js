@@ -53,6 +53,7 @@ export const fetchRecipesWithUser = async (query) => {
     const response = await axios.get("http://localhost:8000/search", {
       params: { ingredients: query, user_id: user_id },
     });
+    console.log(response.data)
 
     return response.data;
   } catch (error) {
@@ -154,6 +155,25 @@ export const deleteFavoriteRecipe = async (recipeId) => {
       return error.response.data;
     } else {
       throw new Error(error.message || "Network error occurred.");
+    }
+  }
+};
+
+export const addRating = async (recipeId,rating) => {
+  try {
+    const token = await tokenToId();
+    const userId = token.userId;
+    const response = await api.post("/api/rating/addRating", {
+      userId:userId,
+      recipeId: recipeId,
+      ratingScore: rating
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      throw new Error(`${error.message}`);
     }
   }
 };
