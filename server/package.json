@@ -9,7 +9,8 @@
     "down": "npx sequelize-cli db:migrate:undo",
     "down:all": "npx sequelize-cli db:migrate:undo:all",
     "start:dev": "nodemon app.js",
-    "proxy": "http://localhost:3000"
+    "proxy": "http://localhost:3000",
+    "test": "jest"
   },
   "dependencies": {
     "@sequelize/postgres": "^7.0.0-alpha.43",

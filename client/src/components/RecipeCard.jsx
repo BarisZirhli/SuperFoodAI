@@ -77,7 +77,7 @@ function RecipeCard({
             src={firstImage}
             alt={title}
             style={{
-              height: "200px",
+              height: "230px",
               objectFit: "cover",
               borderRadius: "10px 10px 0 0",
             }}
