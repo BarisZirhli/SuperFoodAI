@@ -41,7 +41,6 @@ const addRating = async (req, res) => {
       ratingFood,
     });
   } catch (error) {
-    console.error("Error adding rating:", error);
     return res.status(500).send({
       message: `${error}`,
       error: error.message,
