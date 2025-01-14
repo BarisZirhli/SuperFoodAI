@@ -5,8 +5,8 @@ const API_BASE_URL = "http://localhost:3000";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-  },
+    "Content-Type": "application/json"
+  }
 });
 
 export const signup = async (formData) => {
@@ -33,27 +33,15 @@ export const login = async (formData) => {
   }
 };
 
-export const fetchRecipes = async (query) => {
-  try {
-    const response = await axios.get("http://localhost:8000/search", {
-      params: { ingredients: query },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching recipes:", error);
-    return [];
-  }
-};
-
 export const fetchRecipesWithUser = async (query) => {
   try {
     const token = await tokenToId();
     const user_id = token.userId;
 
     const response = await axios.get("http://localhost:8000/search", {
-      params: { ingredients: query, user_id: user_id },
+      params: { ingredients: query, user_id: user_id }
     });
-    console.log(response.data)
+    console.log(response.data);
 
     return response.data;
   } catch (error) {
@@ -68,7 +56,7 @@ export const addFavoriteRecipes = async (recipeId) => {
     const userId = token.userId;
     const response = await api.post("/api/favorite/addFavorite", {
       userId: userId,
-      recipeId: recipeId,
+      recipeId: recipeId
     });
     return response;
   } catch (error) {
@@ -84,8 +72,8 @@ export const getFavorites = async () => {
   try {
     const { data: response } = await api.get("/api/auth/tokenToId", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-      },
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+      }
     });
     const userId = response.userId;
 
@@ -111,8 +99,8 @@ export const tokenToId = async () => {
   try {
     const { data: tokenResponse } = await api.get("/api/auth/tokenToId", {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     });
     console.log("Token response:", tokenResponse);
     return tokenResponse;
@@ -145,7 +133,7 @@ export const deleteFavoriteRecipe = async (recipeId) => {
       `/api/favorite/removeFavorite/${userId}/${recipeId}`,
       {
         userId: userId,
-        recipeId: recipeId,
+        recipeId: recipeId
       }
     );
     console.log(userId, recipeId);
@@ -159,12 +147,12 @@ export const deleteFavoriteRecipe = async (recipeId) => {
   }
 };
 
-export const addRating = async (recipeId,rating) => {
+export const addRating = async (recipeId, rating) => {
   try {
     const token = await tokenToId();
     const userId = token.userId;
     const response = await api.post("/api/rating/addRating", {
-      userId:userId,
+      userId: userId,
       recipeId: recipeId,
       ratingScore: rating
     });
