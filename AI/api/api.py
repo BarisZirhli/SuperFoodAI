@@ -155,20 +155,12 @@ def get_recommendations(user_id: int, ingredients: str):
     df_ratings = pd.read_sql(query_ratings, conn)
     print(f"Df_ratings: {df_ratings}")
     print(df_ratings.columns)
-<<<<<<< HEAD
-
-=======
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
     if df_ratings.empty:
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     query_recipes = 'SELECT "id", "name", "instructions", "ingredients", "calories", "imageUrl" FROM "Recipes"'
     df_recipes = pd.read_sql(query_recipes, conn)
     print(f" Df_recipes: {df_recipes}")
-<<<<<<< HEAD
-
-=======
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
     query_user = f'SELECT "height", "weight" FROM "Users" WHERE "id" = {user_id}'
     user_info = pd.read_sql(query_user, conn)
     print(f"User info: {user_info}")
@@ -179,27 +171,16 @@ def get_recommendations(user_id: int, ingredients: str):
     height = user_info.iloc[0]["height"]
     weight = user_info.iloc[0]["weight"]
 
-<<<<<<< HEAD
-=======
-    # Calculate BMI
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
 
     # --- Content-Based Filtering ---
-<<<<<<< HEAD
-
-=======
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
         df_recipes["instructions"] + df_recipes["ingredients"]
     )
     print(f"Tf idf matrix: {tfidf_matrix}")
-<<<<<<< HEAD
 
-=======
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
     query_vector = tfidf_vectorizer.transform([user_query])
     print(f"Query vector: {query_vector}")
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
@@ -242,12 +223,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
-<<<<<<< HEAD
-        for (recipe_id,) in similar_user_ratings.items():  # Correct way to iterate
-            # Kullanıcının zaten değerlendirdiği tarifleri atla
-=======
-        for recipe_id, rating in similar_user_ratings.items(): 
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
+        for recipe_id in similar_user_ratings.items(): 
             if (
                 recipe_id not in current_user_ratings.index
                 or current_user_ratings[recipe_id] == 0
