@@ -10,6 +10,7 @@ import {
   parseIngredients,
   parseInstructions,
   parseImageUrls,
+  convertCookingTime,
 } from "../utils/regex";
 
 function FavoriteRecipeCard({
@@ -61,7 +62,7 @@ function FavoriteRecipeCard({
   const instructionList = parseInstructions(instructions);
   const imageUrls = parseImageUrls(image);
   const firstImage = imageUrls[0];
-
+  const cookTimes = convertCookingTime(cookTime)
   return (
     <div style={{ perspective: "1000px" }}>
       <div
@@ -172,6 +173,7 @@ function FavoriteRecipeCard({
                 <li key={index}>{instruction}</li>
               ))}
             </ol>
+            <p className="mt-4"><b>Cook Time: </b>{cookTimes}</p>
           </Card.Body>
         </Card>
       </div>

@@ -7,6 +7,7 @@ import {
   parseIngredients,
   parseInstructions,
   parseImageUrls,
+  convertCookingTime,
 } from "../utils/regex";
 
 function RecipeCard({
@@ -15,6 +16,7 @@ function RecipeCard({
   calories,
   ingredients,
   instructions,
+  cookTime,
   image,
 }) {
   const [flipped, setFlipped] = useState(false);
@@ -44,6 +46,7 @@ function RecipeCard({
   const instructionList = parseInstructions(instructions);
   const imageUrls = parseImageUrls(image);
   const firstImage = imageUrls[0];
+  const cookTimes = convertCookingTime(cookTime);
 
   return (
     <div style={{ perspective: "1000px" }}>
@@ -55,7 +58,7 @@ function RecipeCard({
           borderRadius: "10px",
           cursor: "pointer",
           transformStyle: "preserve-3d",
-          marginBottom:"7rem",
+          marginBottom: "7rem",
           transition: "transform 0.6s",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
@@ -132,6 +135,10 @@ function RecipeCard({
                 <li key={index}>{instruction}</li>
               ))}
             </ol>
+            <p>
+              <b className="mt-4">Cook Time: </b>
+              {cookTimes}
+            </p>
           </Card.Body>
         </Card>
       </div>

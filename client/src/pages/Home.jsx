@@ -64,6 +64,7 @@ function Home() {
                 calories={recipe.calories}
                 ingredients={recipe.ingredients}
                 instructions={recipe.instructions}
+                cookTime = {recipe.cookTime}
                 image={recipe.imageUrl}
               />
             </Col>

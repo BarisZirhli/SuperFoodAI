@@ -174,7 +174,7 @@ def get_recommendations(user_id: int, ingredients: str):
     if df_ratings.empty:
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
-    query_recipes = 'SELECT "id", "name", "instructions", "ingredients", "calories", "imageUrl" FROM "Recipes"'
+    query_recipes = 'SELECT "id", "name", "instructions", "ingredients","cookTime", "calories", "imageUrl" FROM "Recipes"'
     df_recipes = pd.read_sql(query_recipes, conn)
     print(f" Df_recipes: {df_recipes}")
     query_user = f'SELECT "height", "weight" FROM "Users" WHERE "id" = {user_id}'
@@ -290,6 +290,7 @@ def get_recommendations(user_id: int, ingredients: str):
             "calories": row["calories"],
             "ingredients": row["ingredients"],
             "instructions": row["instructions"],
+            "cookTime" : row["cookTime"],
             "imageUrl": row.get("imageUrl", None),
         }
         for _, row in filtered_recipes.iterrows()

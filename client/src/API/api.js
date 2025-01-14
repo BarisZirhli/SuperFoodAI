@@ -182,10 +182,9 @@ export const getRating = async (recipeId) => {
 
     const response = await api.get(`/api/rating/getRating/${userId}/${recipeId}`);
     
-    // Check if the response contains data
     if (response.data && response.data.message === "No ratings found for the user.") {
       console.log("No ratings found for this user and recipe.");
-      return null; // You can return null or a default value here
+      return null;
     }
 
     return response.data;
