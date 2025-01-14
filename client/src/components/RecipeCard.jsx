@@ -56,6 +56,7 @@ function RecipeCard({
           borderRadius: "10px",
           cursor: "pointer",
           transformStyle: "preserve-3d",
+          marginBottom:"7rem",
           transition: "transform 0.6s",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
@@ -66,8 +67,7 @@ function RecipeCard({
             height: "100%",
             backfaceVisibility: "hidden",
             borderRadius: "10px",
-            display: "grid",
-            gap: "60px",
+            display: "flex",
             marginLeft: "10px",
             marginRight: "10px",
           }}
@@ -77,7 +77,7 @@ function RecipeCard({
             src={firstImage}
             alt={title}
             style={{
-              height: "200px",
+              height: "230px",
               objectFit: "cover",
               borderRadius: "10px 10px 0 0",
             }}
