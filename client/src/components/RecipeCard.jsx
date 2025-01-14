@@ -27,7 +27,6 @@ function RecipeCard({
   const handleHeartClick = async (e) => {
     e.stopPropagation();
     console.log("Heart button clicked! Recipe ID:", recipeId);
-    console.log("UserId: ", tokenToId());
     try {
       const response = await addFavoriteRecipes(recipeId);
       if (response && response.message) {

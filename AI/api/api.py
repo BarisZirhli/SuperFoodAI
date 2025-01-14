@@ -117,6 +117,22 @@ app.add_middleware(
 )
 
 
+def get_db_connection():
+    try:
+        connection = psycopg2.connect(
+            dbname="SuperFoodDb",
+            user="postgres",
+            password="1234",
+            host="localhost",
+            port="5432",
+        )
+        print("Successfully connected to the database!")
+        return connection
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        return None
+
+
 vectorizer = TfidfVectorizer(
     stop_words=turkish_stop_words, ngram_range=(1, 2), max_features=1000
 )
@@ -131,7 +147,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -171,6 +187,7 @@ def get_recommendations(user_id: int, ingredients: str):
     height = user_info.iloc[0]["height"]
     weight = user_info.iloc[0]["weight"]
 
+    # Calculate BMI
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
 
@@ -180,7 +197,6 @@ def get_recommendations(user_id: int, ingredients: str):
         df_recipes["instructions"] + df_recipes["ingredients"]
     )
     print(f"Tf idf matrix: {tfidf_matrix}")
-
     query_vector = tfidf_vectorizer.transform([user_query])
     print(f"Query vector: {query_vector}")
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
@@ -188,12 +204,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     df_recipes["content_similarity"] = ingredient_similarities[0]
     print(f"Ingredients similarity:  {ingredient_similarities[0]}")
-
     # --- Collaborative Filtering ---
-    df_ratings = (
-        df_ratings.groupby(["UserId", "RecipeId"]).agg({"Rating": "mean"}).reset_index()
-    )
-
     user_item_matrix = df_ratings.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
@@ -223,7 +234,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
-        for recipe_id in similar_user_ratings.items(): 
+        for recipe_id, rating in similar_user_ratings.items(): 
             if (
                 recipe_id not in current_user_ratings.index
                 or current_user_ratings[recipe_id] == 0

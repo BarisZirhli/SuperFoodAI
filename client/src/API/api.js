@@ -5,8 +5,8 @@ const API_BASE_URL = "http://localhost:3000";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 export const signup = async (formData) => {
@@ -41,12 +41,9 @@ export const fetchRecipesWithUser = async (query) => {
 
     // API çağrısı
     const response = await axios.get("http://localhost:8000/search", {
-      params: { ingredients: query, user_id: user_id }
+      params: { ingredients: query, user_id: user_id },
     });
-<<<<<<< HEAD
     console.log(response.data);
-=======
->>>>>>> 95cc69d1fa1b48fcd3ca3c61a39d800583ae090a
 
     console.log("API Response:", response.data);
     return response.data;
@@ -62,14 +59,13 @@ export const fetchRecipesWithUser = async (query) => {
   }
 };
 
-
 export const addFavoriteRecipes = async (recipeId) => {
   try {
     const token = await tokenToId();
     const userId = token.userId;
     const response = await api.post("/api/favorite/addFavorite", {
       userId: userId,
-      recipeId: recipeId
+      recipeId: recipeId,
     });
     return response;
   } catch (error) {
@@ -81,12 +77,31 @@ export const addFavoriteRecipes = async (recipeId) => {
   }
 };
 
+export const addRating = async (recipeId, rating) => {
+  try {
+    const token = await tokenToId();
+    const userId = token.userId;
+    const response = await api.post("/api/rating/addRating", {
+      userId: userId,
+      recipeId: recipeId,
+      ratingScore: rating,
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    } else {
+      throw new Error(`${error.message}`);
+    }
+  }
+};
+
 export const getFavorites = async () => {
   try {
     const { data: response } = await api.get("/api/auth/tokenToId", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`
-      }
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
     });
     const userId = response.userId;
 
@@ -112,8 +127,8 @@ export const tokenToId = async () => {
   try {
     const { data: tokenResponse } = await api.get("/api/auth/tokenToId", {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log("Token response:", tokenResponse);
     return tokenResponse;
@@ -131,7 +146,7 @@ export const getFavoriteDetails = async () => {
     const response = await api.get(
       `/api/favorite/getFavoriteDetails/${userId}`
     );
-    return response.data;
+    return response.data.reverse();
   } catch (err) {
     console.error("Error fetching favorites:", err);
     throw new Error(`${err}`);
@@ -146,7 +161,7 @@ export const deleteFavoriteRecipe = async (recipeId) => {
       `/api/favorite/removeFavorite/${userId}/${recipeId}`,
       {
         userId: userId,
-        recipeId: recipeId
+        recipeId: recipeId,
       }
     );
     console.log(userId, recipeId);
@@ -160,24 +175,30 @@ export const deleteFavoriteRecipe = async (recipeId) => {
   }
 };
 
-export const addRating = async (recipeId, rating) => {
+export const getRating = async (recipeId) => {
   try {
     const token = await tokenToId();
     const userId = token.userId;
-    const response = await api.post("/api/rating/addRating", {
-      userId: userId,
-      recipeId: recipeId,
-      ratingScore: rating
-    });
-    return response;
+
+    const response = await api.get(`/api/rating/getRating/${userId}/${recipeId}`);
+    
+    // Check if the response contains data
+    if (response.data && response.data.message === "No ratings found for the user.") {
+      console.log("No ratings found for this user and recipe.");
+      return null; // You can return null or a default value here
+    }
+
+    return response.data;
   } catch (error) {
     if (error.response) {
+      console.error("Error fetching favorite rating:", error.response.data);
       return error.response.data;
-    } else {
-      throw new Error(`${error.message}`);
     }
+    console.error("Network error occurred:", error);
+    throw new Error("An error occurred while fetching the rating.");
   }
 };
+
 
 export const signout = async () => {
   try {

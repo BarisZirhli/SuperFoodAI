@@ -3,7 +3,7 @@ const Rating = require("../models/Rating");
 
 const addRating = async (req, res) => {
   try {
-    const { userId, recipeId, ratingScore } = req.body;
+    const { userId, recipeId, rating } = req.body;
     const existingUserFavoriteList = await FavoriteRecipe.findOne({
       where: {
         UserId: userId,
@@ -33,7 +33,7 @@ const addRating = async (req, res) => {
     const ratingFood = await Rating.create({
       UserId: userId,
       RecipeId: recipeId,
-      Rating: ratingScore,
+      Rating: rating,
     });
 
     return res.status(201).send({
@@ -48,6 +48,36 @@ const addRating = async (req, res) => {
   }
 };
 
+const getRating = async (req, res) => {
+  try {
+    const {userId,recipeId} = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const ratings = await Rating.findAll({
+      where: {
+        UserId: userId,
+        RecipeId: recipeId
+      },
+      attributes: ["Rating"],
+    });
+
+
+    return res.status(200).json({
+      message: "User's favorite recipes ratings retrieved successfully.",
+      ratings,
+    });
+  } catch (error) {
+    console.error("Error fetching favorite ratings:", error);
+    return res.status(500).json({
+      message: "Failed to fetch favorite ratings.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   addRating,
+  getRating,
 };
