@@ -194,7 +194,7 @@ def get_recommendations(user_id: int, ingredients: str):
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
-        df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["keywords"]
+        df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["Keywords"]
     )
     print(f"Tf idf matrix: {tfidf_matrix}")
     query_vector = tfidf_vectorizer.transform([user_query])
