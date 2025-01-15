@@ -15,7 +15,6 @@ Domates Pacre
 fesleğen yaprakları
 Margarin
 Bulgar buğday
-
 ekşi krema
 Sıcak İtalyan Sosis
 Muz
@@ -443,7 +442,6 @@ kalın kesilmiş turuncu marmelat
 Çikolata Yongaları
 msg
 cajun tarzı haşlanmış domates
-sake
 Pecans
 Kuru Wasabi
 Yalın Sığır
