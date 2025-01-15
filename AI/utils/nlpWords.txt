@@ -478,7 +478,6 @@ gerçek vanilya
 çam fıstığı
 cayenne
 Kara Biber
-Mısır nişastası
 Marshmallow Creme
 Yumurta
 worcestershire sosu
@@ -1245,7 +1244,6 @@ Limon
 taze balkabağı
 Angel Pul Hindistan cevizi
 kuzu
-Sake
 yeşilChili
 olgun zeytin
 Kirantro

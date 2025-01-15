@@ -1,16 +1,7 @@
-from zemberek.morphology import TurkishMorphology
-from zemberek.normalization import TurkishSpellChecker
+import re
+from difflib import get_close_matches
 
-# Türkçe morfolojik analiz için Zemberek başlatılıyor.
-morphology = TurkishMorphology.create_with_defaults()
 
-# Yazım denetleyicisi oluşturuluyor.
-spell_checker = TurkishSpellChecker(morphology)
-
-# Kullanıcının girdiği kelime.
-word = "saker"
-
-# 'nlpWords.txt' dosyasından yiyecek ile ilgili kelimeleri oku.
 food_related_words = []
 try:
     with open("../utils/nlpWords.txt", "r", encoding="utf-8") as file:
@@ -19,11 +10,24 @@ except FileNotFoundError:
     print("Hata: 'nlpWords.txt' dosyası bulunamadı.")
     exit()
 
-suggestions = spell_checker.suggest_for_word(word)
 
-filtered_suggestions = [s for s in suggestions if s.lower() in food_related_words]
+def normalize_word(word):
 
-if len(filtered_suggestions) == 0:
+    word = word.lower()
+    word = re.sub(r"(de|den|dir|ki)$", "", word)
+    word = re.sub(r"\d+", "", word)
+    word = re.sub(r"[^a-zçğıöşü]", "", word)
+    return word
+
+
+word = "mereotu"
+normalized_word = normalize_word(word)
+suggestions = get_close_matches(normalized_word, food_related_words, n=3, cutoff=0.8)
+
+
+if not suggestions:
     print(f"'{word}' yanlış yazılmış ancak yiyeceklerle ilgili öneri bulunamadı.")
 else:
-    print(f"'{word}' yanlış yazılmış. Yiyeceklerle ilgili öneriler: {filtered_suggestions}")
+    print(f"'{word}' yanlış yazılmış. Yiyeceklerle ilgili öneriler:")
+    for suggestion in suggestions:
+        print(f"- {suggestion}")
