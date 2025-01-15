@@ -9,7 +9,7 @@ from nltk.stem import WordNetLemmatizer
 import string
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
-from scipy.stats import pearsonr
+import csv
 
 turkish_stop_words = [
     "a",
@@ -101,19 +101,19 @@ def preprocess_text(text):
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",  
-    "http://127.0.0.1:5173", 
-    "http://localhost:3000",  
-    "http://127.0.0.1:3000",  
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 # CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, 
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -189,12 +189,12 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
-    print(f"BMI: {bmi}")
+    recipedf = pd.read_csv("../utils/recipes.csv", encoding="utf-8")
 
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
-        df_recipes["instructions"] + df_recipes["ingredients"]
+        df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["keywords"]
     )
     print(f"Tf idf matrix: {tfidf_matrix}")
     query_vector = tfidf_vectorizer.transform([user_query])
@@ -234,7 +234,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     for similar_user in similar_users:
         similar_user_ratings = user_item_matrix.loc[similar_user]
-        for recipe_id, rating in similar_user_ratings.items(): 
+        for recipe_id, rating in similar_user_ratings.items():
             if (
                 recipe_id not in current_user_ratings.index
                 or current_user_ratings[recipe_id] == 0
@@ -290,13 +290,14 @@ def get_recommendations(user_id: int, ingredients: str):
             "calories": row["calories"],
             "ingredients": row["ingredients"],
             "instructions": row["instructions"],
-            "cookTime" : row["cookTime"],
+            "cookTime": row["cookTime"],
             "imageUrl": row.get("imageUrl", None),
         }
         for _, row in filtered_recipes.iterrows()
     ]
     print(f"Tavsiyeler bunlar: {recommendations}")
     return recommendations
+
 
 if __name__ == "__main__":
     import uvicorn

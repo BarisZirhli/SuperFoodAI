@@ -20,7 +20,7 @@ def normalize_word(word):
     return word
 
 
-word = "mereotu"
+word = "çuklata"
 normalized_word = normalize_word(word)
 suggestions = get_close_matches(normalized_word, food_related_words, n=3, cutoff=0.8)
 
