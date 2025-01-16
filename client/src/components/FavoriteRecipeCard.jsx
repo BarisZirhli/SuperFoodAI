@@ -10,7 +10,7 @@ import {
   parseIngredients,
   parseInstructions,
   parseImageUrls,
-  convertCookingTime,
+  convertCookingTime
 } from "../utils/regex";
 
 function FavoriteRecipeCard({
@@ -22,19 +22,20 @@ function FavoriteRecipeCard({
   instructions,
   image,
   avgRate,
+  rate
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
-  const [selectedRating, setSelectedRating] = React.useState(null);
+  const [selectedRating, setSelectedRating] = useState(0);
 
-  const handleRatingChange = async(e) => {
+  const handleRatingChange = async (e) => {
     e.stopPropagation();
     const numericRating = parseInt(avgRate, 10);
     setSelectedRating(numericRating);
-    console.log(numericRating)
-    console.log(recipeId)
-    const response = await addRating(recipeId,numericRating);
-    console.log(`Response: ${response}`)
+    console.log(numericRating);
+    console.log(recipeId);
+    const response = await addRating(recipeId, numericRating);
+    console.log(`Response: ${response}`);
     console.log(`Seçilen puan: ${numericRating})`);
   };
   const handleCardClick = () => {
@@ -62,7 +63,7 @@ function FavoriteRecipeCard({
   const instructionList = parseInstructions(instructions);
   const imageUrls = parseImageUrls(image);
   const firstImage = imageUrls[0];
-  const cookTimes = convertCookingTime(cookTime)
+  const cookTimes = convertCookingTime(cookTime);
   return (
     <div style={{ perspective: "1000px" }}>
       <div
@@ -74,7 +75,7 @@ function FavoriteRecipeCard({
           cursor: "pointer",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
         }}
       >
         <Card
@@ -86,7 +87,7 @@ function FavoriteRecipeCard({
             display: "grid",
             gap: "10px",
             marginLeft: "10px",
-            marginRight: "10px",
+            marginRight: "10px"
           }}
         >
           <Card.Img
@@ -96,7 +97,7 @@ function FavoriteRecipeCard({
             style={{
               height: "230px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0",
+              borderRadius: "10px 10px 0 0"
             }}
           />
           <Card.Body>
@@ -115,7 +116,7 @@ function FavoriteRecipeCard({
                         name="rating"
                         value={value}
                         id={`rating-${value}`}
-                        onClick={handleRatingChange}
+                        onChange={handleRatingChange}
                       />
                       <label htmlFor={`rating-${value}`}>☆</label>
                     </React.Fragment>
@@ -132,7 +133,7 @@ function FavoriteRecipeCard({
                 position: "absolute",
                 bottom: "6.5px",
                 left: "44%",
-                justifyContent: "center",
+                justifyContent: "center"
               }}
               onClick={handleHeartClick}
             >
@@ -150,7 +151,7 @@ function FavoriteRecipeCard({
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
-            paddingBottom: "10px",
+            paddingBottom: "10px"
           }}
         >
           <Card.Body className="card-body">
@@ -159,7 +160,7 @@ function FavoriteRecipeCard({
               {ingredientList.map((ingredient, index) => (
                 <li
                   style={{
-                    listStyleType: "none",
+                    listStyleType: "none"
                   }}
                   key={index}
                 >
@@ -173,7 +174,16 @@ function FavoriteRecipeCard({
                 <li key={index}>{instruction}</li>
               ))}
             </ol>
-            <p className="mt-4"><b>Cook Time: </b>{cookTimes}</p>
+            <p className="mt-4">
+              <b>Cook Time: </b>
+              {cookTimes}
+            </p>
+            {/*
+            <div className="rating">
+              {rate.map((r, index) => (
+                <span key={index}>{r >= index + 1 ? "★" : "☆"}</span>
+              ))}
+            </div>*/}
           </Card.Body>
         </Card>
       </div>
