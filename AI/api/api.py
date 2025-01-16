@@ -1,4 +1,4 @@
-import psycopg2
+import os
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -9,7 +9,6 @@ from nltk.stem import WordNetLemmatizer
 import string
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
-import csv
 
 turkish_stop_words = [
     "a",
@@ -94,7 +93,6 @@ def preprocess_text(text):
     text = " ".join(
         [lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words]
     )
-
     return text
 
 
@@ -117,22 +115,6 @@ app.add_middleware(
 )
 
 
-def get_db_connection():
-    try:
-        connection = psycopg2.connect(
-            dbname="SuperFoodDb",
-            user="postgres",
-            password="1234",
-            host="localhost",
-            port="5432",
-        )
-        print("Successfully connected to the database!")
-        return connection
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return None
-
-
 vectorizer = TfidfVectorizer(
     stop_words=turkish_stop_words, ngram_range=(1, 2), max_features=1000
 )
@@ -147,7 +129,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -189,7 +171,14 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
-    recipedf = pd.read_csv("../utils/recipes.csv", encoding="utf-8")
+    file_path = r"C:\Users\pc\Desktop\SuperFoodAI-main\SuperFoodAI\AI\api\recipes.csv"
+    if os.path.exists(file_path):
+        recipedf = pd.read_csv(file_path, encoding="utf-8")
+        print("File found and loaded successfully.")
+        # print(recipedf)
+    else:
+        print(f"File not found: {file_path}")
+        recipedf = pd.DataFrame()
 
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
@@ -204,11 +193,18 @@ def get_recommendations(user_id: int, ingredients: str):
 
     df_recipes["content_similarity"] = ingredient_similarities[0]
     print(f"Ingredients similarity:  {ingredient_similarities[0]}")
+
     # --- Collaborative Filtering ---
+    df_ratings = df_ratings.groupby(["UserId", "RecipeId"], as_index=False).agg(
+        {"Rating": "mean"}
+    )
     user_item_matrix = df_ratings.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
 
+    maxIngredients = ingredient_similarities.max()
+    if maxIngredients < 0.05:
+        raise HTTPException(status_code=404, detail="not related")
     print(f" User item matrix: {user_item_matrix}")
     user_similarity_matrix = cosine_similarity(user_item_matrix)
 
@@ -249,13 +245,13 @@ def get_recommendations(user_id: int, ingredients: str):
                 SELECT * FROM "Recipes" WHERE "id" = {recipe_id}
             """
 
-    try:
-        recipe_data = pd.read_sql(query_recommend_recipes, conn)
+            try:
+                recipe_data = pd.read_sql(query_recommend_recipes, conn)
 
-        if not recipe_data.empty:
-            recommendations.append(recipe_data)
-    except Exception as e:
-        print(f"Error fetching data for RecipeId {recipe_id}: {e}")
+                if not recipe_data.empty:
+                    recommendations.append(recipe_data)
+            except Exception as e:
+                print(f"Error fetching data for RecipeId {recipe_id}: {e}")
     else:
         print("No collaborative recipes to recommend.")
 
@@ -265,7 +261,7 @@ def get_recommendations(user_id: int, ingredients: str):
     filtered_recipes = df_recipes[df_recipes["id"].isin(collaborative_recipes)]
 
     if bmi < 18.5:
-        filtered_recipes = filtered_recipes["calories"] > 400
+        filtered_recipes = filtered_recipes[filtered_recipes["calories"] > 400]
     elif 18.5 <= bmi < 24.9:
         filtered_recipes = filtered_recipes[
             (filtered_recipes["calories"] > 300) & (filtered_recipes["calories"] < 700)
@@ -302,4 +298,4 @@ def get_recommendations(user_id: int, ingredients: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="local", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

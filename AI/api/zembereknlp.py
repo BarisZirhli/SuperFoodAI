@@ -1,7 +1,6 @@
 import re
 from difflib import get_close_matches
 
-
 food_related_words = []
 try:
     with open("../utils/nlpWords.txt", "r", encoding="utf-8") as file:
@@ -9,20 +8,20 @@ try:
 except FileNotFoundError:
     print("Hata: 'nlpWords.txt' dosyası bulunamadı.")
     exit()
+food_related_words = list(set(food_related_words))
 
 
 def normalize_word(word):
 
     word = word.lower()
-    word = re.sub(r"(de|den|dir|ki)$", "", word)
     word = re.sub(r"\d+", "", word)
-    word = re.sub(r"[^a-zçğıöşü]", "", word)
+
     return word
 
 
-word = "çuklata"
+word = "saker"
 normalized_word = normalize_word(word)
-suggestions = get_close_matches(normalized_word, food_related_words, n=3, cutoff=0.8)
+suggestions = get_close_matches(normalized_word, food_related_words, n=3, cutoff=0.65)
 
 
 if not suggestions:
