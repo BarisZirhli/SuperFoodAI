@@ -129,7 +129,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -173,7 +173,7 @@ def get_recommendations(user_id: int, ingredients: str):
     file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
-
+        # print(recipedf)
     else:
         print(f"File not found: {file_path}")
         recipedf = pd.DataFrame()
@@ -181,16 +181,13 @@ def get_recommendations(user_id: int, ingredients: str):
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
-        df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["Keywords"]
+        df_recipes["instructions"] + df_recipes["ingredients"]
     )
     query_vector = tfidf_vectorizer.transform([user_query])
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
-
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
 
-    print(ingredient_similarities[0])
-    # first most four similar recipe
     df_recipes["content_similarity"] = ingredient_similarities[0]
     content_results = df_recipes.sort_values(
         by="content_similarity", ascending=False
@@ -204,6 +201,7 @@ def get_recommendations(user_id: int, ingredients: str):
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
 
+    # Kullanıcı matrisi düşükse yalnızca içerik önerileri
     user_similarity_matrix = cosine_similarity(user_item_matrix)
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
@@ -211,16 +209,14 @@ def get_recommendations(user_id: int, ingredients: str):
         columns=user_item_matrix.index,
     )
 
-    print(user_similarities)
-    df_ratings["user_similarities"] = user_similarity_df[
-        user_id
-    ].values  # user similarity values
     user_similarities = (
         user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
     )
 
-    user_similarity_threshold = 0.1
+    # Kullanıcı benzerlik eşiği
+    user_similarity_threshold = 0.1  # Çok düşük bir oran belirlenebilir
     if user_similarities.mean() < user_similarity_threshold:
+        # Eğer kullanıcı benzerlik oranı düşükse yalnızca içerik tabanlı sonuçlar döner
         return [
             {
                 "recipeId": int(row["id"]),
@@ -234,6 +230,7 @@ def get_recommendations(user_id: int, ingredients: str):
             for _, row in content_results.iterrows()
         ]
 
+    # Kullanıcı benzerlik yüksekse collaborative filtering yapılır
     similar_users = user_similarities.index[:5]
 
     collaborative_recipes = []
@@ -250,7 +247,6 @@ def get_recommendations(user_id: int, ingredients: str):
 
     collaborative_recipes = list(set(collaborative_recipes))  # Unique recipe IDs
     collaborative_results = df_recipes[df_recipes["id"].isin(collaborative_recipes)]
-    print(collaborative_results)
 
     # Apply BMI-based filtering
     if bmi < 18.5:
@@ -275,12 +271,12 @@ def get_recommendations(user_id: int, ingredients: str):
     combined_results = pd.concat(
         [content_results, collaborative_results]
     ).drop_duplicates(subset="id")
-
+    print(combined_results)
     combined_results["final_similarity"] = combined_results["content_similarity"]
     combined_results = combined_results.sort_values(
         by="final_similarity", ascending=False
     ).head(4)
-    print(combined_results)
+
     # Format results for response
     recommendations = [
         {
