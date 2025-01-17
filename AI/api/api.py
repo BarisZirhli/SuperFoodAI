@@ -204,10 +204,6 @@ def get_recommendations(user_id: int, ingredients: str):
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
 
-<<<<<<< HEAD
-=======
-    # Calculate user similarity
->>>>>>> 5baaae80d214164f5b0d682bd3485007a36a68bc
     user_similarity_matrix = cosine_similarity(user_item_matrix)
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
@@ -223,15 +219,8 @@ def get_recommendations(user_id: int, ingredients: str):
         user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
     )
 
-<<<<<<< HEAD
-    user_similarity_threshold = 0.1 
+    user_similarity_threshold = 0.1
     if user_similarities.mean() < user_similarity_threshold:
-=======
-    # Set a threshold for user similarity
-    user_similarity_threshold = 0.1  # Çok düşük bir oran belirlenebilir
-    if user_similarities.mean() < user_similarity_threshold:
-        # if user similarity is low, return content-based recommendations
->>>>>>> 5baaae80d214164f5b0d682bd3485007a36a68bc
         return [
             {
                 "recipeId": int(row["id"]),
@@ -245,10 +234,6 @@ def get_recommendations(user_id: int, ingredients: str):
             for _, row in content_results.iterrows()
         ]
 
-<<<<<<< HEAD
-=======
-    # user similarity is high, apply collaborative filtering
->>>>>>> 5baaae80d214164f5b0d682bd3485007a36a68bc
     similar_users = user_similarities.index[:5]
 
     collaborative_recipes = []

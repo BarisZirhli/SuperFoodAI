@@ -115,10 +115,10 @@ function FavoriteRecipeCard({
                 <div className="rating d-flex">
                   {Array.from({ length: 5 }, (_, index) => (
                     <span key={index}>
-                      {index < rate ? (
-                        <CiStar color="gray" size={20} />
+                      {index < 5 - rate ? (
+                        <CiStar color="gray" size={20} /> // Unfilled star
                       ) : (
-                        <FaStar color="gold" size={20} />
+                        <FaStar color="gold" size={20} /> // Filled star
                       )}
                     </span>
                   ))}
