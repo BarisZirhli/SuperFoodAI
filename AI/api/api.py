@@ -129,7 +129,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -167,7 +167,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
-    file_path = r"C:\Users\pc\Desktop\SuperFoodAI-main\SuperFoodAI\AI\api\recipes.csv"
+    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
         # print(recipedf)
