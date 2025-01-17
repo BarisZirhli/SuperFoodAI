@@ -6,14 +6,14 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-csv_file_name = "newRecipe.csv"
-new_csv = "newRecipeUpdate.csv"
+csv_file_name = "newRecipeUpdate.csv"
+new_csv = "newinRecipeUpdate.csv"
 image_list = []
 
 
 def search_photos(query: str) -> str:
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
 
@@ -79,13 +79,13 @@ with open(csv_file_name, mode="r", encoding="utf-8") as file:
     fieldnames = csv_reader.fieldnames
 
     for row in csv_reader:
-        if "Error" in row["Images"] or not row["Images"]:
-            photo_url = retry_search(row["Name"])
+        if "Error" in row["imageUrl"] or not row["imageUrl"]:
+            photo_url = retry_search(row["name"])
             if photo_url:
-                row["Images"] = photo_url
-                print(f"Image URL added for {row['Name']}: {photo_url}")
+                row["imageUrl"] = photo_url
+                print(f"Image URL added for {row['name']}: {photo_url}")
             else:
-                print(f"No image found for {row['Name']}.")
+                print(f"No image found for {row['name']}.")
         image_list.append(row)
 
 # Save the updated CSV

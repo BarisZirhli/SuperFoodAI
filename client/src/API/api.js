@@ -175,14 +175,17 @@ export const deleteFavoriteRecipe = async (recipeId) => {
   }
 };
 
-export const getRating = async (recipeId) => {
+export const getRating = async () => {
   try {
     const token = await tokenToId();
     const userId = token.userId;
+    console.log(userId);
+    const response = await api.get(`/api/rating/getRating/${userId}`);
 
-    const response = await api.get(`/api/rating/getRating/${userId}/${recipeId}`);
-    
-    if (response.data && response.data.message === "No ratings found for the user.") {
+    if (
+      response.data &&
+      response.data.message === "No ratings found for the user."
+    ) {
       console.log("No ratings found for this user and recipe.");
       return null;
     }
@@ -197,7 +200,6 @@ export const getRating = async (recipeId) => {
     throw new Error("An error occurred while fetching the rating.");
   }
 };
-
 
 export const signout = async () => {
   try {

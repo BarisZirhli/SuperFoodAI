@@ -1,8 +1,5 @@
-.headerContainer {
-    margin-bottom: 6.5rem;
-}
-
-.logo {
+.favoriteRecipeTitle {
     font-family: "Lobster", sans-serif;
     letter-spacing: 2px;
+    color: #232121;
 }

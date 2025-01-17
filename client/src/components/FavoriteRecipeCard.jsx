@@ -4,7 +4,7 @@ import "../css/RecipeCard.css";
 import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
 import "../css/FavoriteRecipeCard.css";
-import { addRating } from "../API/api";
+import { addRating, getRating } from "../API/api";
 
 import {
   parseIngredients,
@@ -30,14 +30,15 @@ function FavoriteRecipeCard({
 
   const handleRatingChange = async (e) => {
     e.stopPropagation();
-    const numericRating = parseInt(avgRate, 10);
-    setSelectedRating(numericRating);
+    const numericRating = e.target.value; 
+    setSelectedRating(Number(numericRating));
     console.log(numericRating);
     console.log(recipeId);
     const response = await addRating(recipeId, numericRating);
     console.log(`Response: ${response}`);
-    console.log(`Seçilen puan: ${numericRating})`);
+    console.log(`Seçilen puan: ${numericRating}`);
   };
+  
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
@@ -109,7 +110,7 @@ function FavoriteRecipeCard({
             <div className="d-flex justify-content-center mb-5">
               <div className="text-center mb-2">
                 <div className="rating">
-                  {[5, 4, 3, 2, 1].map((value) => (
+                  {[5,4,3,2,1].map((value) => (
                     <React.Fragment key={value}>
                       <input
                         type="radio"
@@ -178,12 +179,7 @@ function FavoriteRecipeCard({
               <b>Cook Time: </b>
               {cookTimes}
             </p>
-            {/*
-            <div className="rating">
-              {rate.map((r, index) => (
-                <span key={index}>{r >= index + 1 ? "★" : "☆"}</span>
-              ))}
-            </div>*/}
+            
           </Card.Body>
         </Card>
       </div>

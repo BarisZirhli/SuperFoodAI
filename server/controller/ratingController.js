@@ -1,10 +1,11 @@
-const FavoriteRecipe = require("../models/FavoriteRecipe");
+const favoriteRecipe = require("../models/FavoriteRecipe");
 const Rating = require("../models/Rating");
+const recipe = require("../models/recipe");
 
 const addRating = async (req, res) => {
   try {
     const { userId, recipeId, rating } = req.body;
-    const existingUserFavoriteList = await FavoriteRecipe.findOne({
+    const existingUserFavoriteList = await favoriteRecipe.findOne({
       where: {
         UserId: userId,
         RecipeId: recipeId,
@@ -50,28 +51,58 @@ const addRating = async (req, res) => {
 
 const getRating = async (req, res) => {
   try {
-    const {userId,recipeId} = req.params;
+    const { userId } = req.params;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
+
+    // Fetch ratings for the user
     const ratings = await Rating.findAll({
       where: {
         UserId: userId,
-        RecipeId: recipeId
       },
-      attributes: ["Rating"],
+      attributes: ["RecipeId", "Rating"],
     });
 
+    // If no ratings, return an empty array
+    if (ratings.length === 0) {
+      return res.status(200).json([]);
+    }
 
-    return res.status(200).json({
-      message: "User's favorite recipes ratings retrieved successfully.",
-      ratings,
+    // Extract RecipeIds from ratings
+    const recipeIds = ratings.map((rating) => rating.RecipeId);
+
+    // Fetch the recipes based on RecipeIds
+    const recipes = await recipe.findAll({
+      where: {
+        id: recipeIds,
+      },
+      attributes: [
+        "id",
+        "name",
+        "ingredients",
+        "instructions",
+        "cookTime",
+        "imageUrl",
+        "calories",
+        "avgRate",
+      ],
     });
+
+    const recipesWithRating = recipes.map((recipe) => {
+      const rating = ratings.find((r) => r.RecipeId === recipe.id);
+      return {
+        ...recipe.toJSON(),
+        userRating: rating ? rating.Rating : null,
+      };
+    });
+
+    return res.status(200).json(recipesWithRating);
   } catch (error) {
-    console.error("Error fetching favorite ratings:", error);
+    console.error("Error fetching ratings and recipes:", error);
     return res.status(500).json({
-      message: "Failed to fetch favorite ratings.",
+      message: "Failed to fetch ratings and recipes.",
       error: error.message,
     });
   }

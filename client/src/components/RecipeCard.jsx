@@ -49,7 +49,7 @@ function RecipeCard({
   const cookTimes = convertCookingTime(cookTime);
 
   return (
-    <div style={{ perspective: "1000px" }}>
+    <div style={{ perspective: "1000px" }} >
       <div
         onClick={handleCardClick}
         style={{

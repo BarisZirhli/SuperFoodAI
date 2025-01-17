@@ -74,7 +74,7 @@ function Home() {
       <div
         style={{
           position: "absolute",
-          bottom: "7%",
+          bottom: "10%",
           left: "77.8%",
           color: "black",
           zIndex: "100",
@@ -89,7 +89,7 @@ function Home() {
             cursor: "pointer",
           }}
         >
-          <CiSearch className="fs-4 text-dark fw-bolder" />
+          <CiSearch className="fs-4 text-dark fw-bolder searchItem"/>
         </button>
       </div>
       <input

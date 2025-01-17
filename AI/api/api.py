@@ -170,7 +170,6 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
-<<<<<<< HEAD
     file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
@@ -178,8 +177,6 @@ def get_recommendations(user_id: int, ingredients: str):
     else:
         print(f"File not found: {file_path}")
         recipedf = pd.DataFrame()
-=======
->>>>>>> 975cf0b427f2a5a13080dbc3a7bac070ad4d1198
 
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
