@@ -129,7 +129,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -189,6 +189,7 @@ def get_recommendations(user_id: int, ingredients: str):
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
 
+    print(ingredient_similarities[0])
     # first most four similar recipe
     df_recipes["content_similarity"] = ingredient_similarities[0]
     content_results = df_recipes.sort_values(
@@ -278,7 +279,7 @@ def get_recommendations(user_id: int, ingredients: str):
     combined_results = pd.concat(
         [content_results, collaborative_results]
     ).drop_duplicates(subset="id")
-    print(combined_results)
+
     combined_results["final_similarity"] = combined_results["content_similarity"]
     combined_results = combined_results.sort_values(
         by="final_similarity", ascending=False

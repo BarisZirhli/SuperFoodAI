@@ -13,7 +13,7 @@ import {
   parseIngredients,
   parseInstructions,
   parseImageUrls,
-  convertCookingTime,
+  convertCookingTime
 } from "../utils/regex";
 
 function FavoriteRecipeCard({
@@ -25,7 +25,7 @@ function FavoriteRecipeCard({
   instructions,
   image,
   avgRate,
-  rate,
+  rate
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
@@ -79,7 +79,7 @@ function FavoriteRecipeCard({
           cursor: "pointer",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
         }}
       >
         <Card
@@ -91,7 +91,7 @@ function FavoriteRecipeCard({
             display: "grid",
             gap: "10px",
             marginLeft: "10px",
-            marginRight: "10px",
+            marginRight: "10px"
           }}
         >
           <Card.Img
@@ -101,7 +101,7 @@ function FavoriteRecipeCard({
             style={{
               height: "230px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0",
+              borderRadius: "10px 10px 0 0"
             }}
           />
           <Card.Body>
@@ -116,9 +116,9 @@ function FavoriteRecipeCard({
                   {Array.from({ length: 5 }, (_, index) => (
                     <span key={index}>
                       {index < rate ? (
-                        <FaStar color="gold" size={20} />
-                      ) : (
                         <CiStar color="gray" size={20} />
+                      ) : (
+                        <FaStar color="gold" size={20} />
                       )}
                     </span>
                   ))}
@@ -135,7 +135,7 @@ function FavoriteRecipeCard({
                 position: "absolute",
                 bottom: "6.5px",
                 left: "44%",
-                justifyContent: "center",
+                justifyContent: "center"
               }}
               onClick={handleHeartClick}
             >
@@ -153,7 +153,7 @@ function FavoriteRecipeCard({
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
-            paddingBottom: "10px",
+            paddingBottom: "10px"
           }}
         >
           <Card.Body className="card-body">
@@ -162,7 +162,7 @@ function FavoriteRecipeCard({
               {ingredientList.map((ingredient, index) => (
                 <li
                   style={{
-                    listStyleType: "none",
+                    listStyleType: "none"
                   }}
                   key={index}
                 >
