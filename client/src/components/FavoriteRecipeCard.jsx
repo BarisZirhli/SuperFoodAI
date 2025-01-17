@@ -5,12 +5,15 @@ import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
 import "../css/FavoriteRecipeCard.css";
 import { addRating, getRating } from "../API/api";
+import { CiStar } from "react-icons/ci"; // boş yıldız
+import { FaStar } from "react-icons/fa"; // tam yıldız
+import { FaStarHalfAlt } from "react-icons/fa"; // yarım yıldız
 
 import {
   parseIngredients,
   parseInstructions,
   parseImageUrls,
-  convertCookingTime
+  convertCookingTime,
 } from "../utils/regex";
 
 function FavoriteRecipeCard({
@@ -22,7 +25,7 @@ function FavoriteRecipeCard({
   instructions,
   image,
   avgRate,
-  rate
+  rate,
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
@@ -30,7 +33,7 @@ function FavoriteRecipeCard({
 
   const handleRatingChange = async (e) => {
     e.stopPropagation();
-    const numericRating = e.target.value; 
+    const numericRating = e.target.value;
     setSelectedRating(Number(numericRating));
     console.log(numericRating);
     console.log(recipeId);
@@ -38,7 +41,7 @@ function FavoriteRecipeCard({
     console.log(`Response: ${response}`);
     console.log(`Seçilen puan: ${numericRating}`);
   };
-  
+
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
   };
@@ -76,7 +79,7 @@ function FavoriteRecipeCard({
           cursor: "pointer",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
         <Card
@@ -88,7 +91,7 @@ function FavoriteRecipeCard({
             display: "grid",
             gap: "10px",
             marginLeft: "10px",
-            marginRight: "10px"
+            marginRight: "10px",
           }}
         >
           <Card.Img
@@ -98,7 +101,7 @@ function FavoriteRecipeCard({
             style={{
               height: "230px",
               objectFit: "cover",
-              borderRadius: "10px 10px 0 0"
+              borderRadius: "10px 10px 0 0",
             }}
           />
           <Card.Body>
@@ -109,22 +112,20 @@ function FavoriteRecipeCard({
             {/* Rating Section */}
             <div className="d-flex justify-content-center mb-5">
               <div className="text-center mb-2">
-                <div className="rating">
-                  {[5,4,3,2,1].map((value) => (
-                    <React.Fragment key={value}>
-                      <input
-                        type="radio"
-                        name="rating"
-                        value={value}
-                        id={`rating-${value}`}
-                        onChange={handleRatingChange}
-                      />
-                      <label htmlFor={`rating-${value}`}>☆</label>
-                    </React.Fragment>
+                <div className="rating d-flex">
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <span key={index}>
+                      {index < rate ? (
+                        <FaStar color="gold" size={20} />
+                      ) : (
+                        <CiStar color="gray" size={20} />
+                      )}
+                    </span>
                   ))}
                 </div>
               </div>
             </div>
+
             <Button
               style={{
                 all: "unset",
@@ -134,7 +135,7 @@ function FavoriteRecipeCard({
                 position: "absolute",
                 bottom: "6.5px",
                 left: "44%",
-                justifyContent: "center"
+                justifyContent: "center",
               }}
               onClick={handleHeartClick}
             >
@@ -152,7 +153,7 @@ function FavoriteRecipeCard({
             transform: "rotateY(180deg)",
             borderRadius: "10px",
             overflowY: "auto",
-            paddingBottom: "10px"
+            paddingBottom: "10px",
           }}
         >
           <Card.Body className="card-body">
@@ -161,7 +162,7 @@ function FavoriteRecipeCard({
               {ingredientList.map((ingredient, index) => (
                 <li
                   style={{
-                    listStyleType: "none"
+                    listStyleType: "none",
                   }}
                   key={index}
                 >
@@ -179,7 +180,6 @@ function FavoriteRecipeCard({
               <b>Cook Time: </b>
               {cookTimes}
             </p>
-            
           </Card.Body>
         </Card>
       </div>

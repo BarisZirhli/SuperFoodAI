@@ -189,7 +189,7 @@ def get_recommendations(user_id: int, ingredients: str):
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
 
-    # first most  four similar recipe
+    # first most four similar recipe
     df_recipes["content_similarity"] = ingredient_similarities[0]
     content_results = df_recipes.sort_values(
         by="content_similarity", ascending=False
@@ -211,10 +211,14 @@ def get_recommendations(user_id: int, ingredients: str):
         columns=user_item_matrix.index,
     )
 
+    print(user_similarities)
+    df_ratings["user_similarities"] = user_similarity_df[
+        user_id
+    ].values  # user similarity values
     user_similarities = (
         user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
     )
-    print(user_similarities)
+
     # Set a threshold for user similarity
     user_similarity_threshold = 0.1  # Çok düşük bir oran belirlenebilir
     if user_similarities.mean() < user_similarity_threshold:
