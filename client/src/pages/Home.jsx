@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "../components/RecipeCard";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Toast } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/Home.css";
 import { fetchRecipesWithUser } from "../API/api";
@@ -13,6 +13,7 @@ function Home() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [showToast, setShowToast] = useState(false); // Toast görünürlüğü
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ function Home() {
         } catch (err) {
           console.error("An error occurred", err);
           setError("An error occurred while fetching recipes.");
+          setShowToast(true); // Toast'ı göster
         } finally {
           setLoading(false);
         }
@@ -52,7 +54,6 @@ function Home() {
   return (
     <div className="recipeListContainer">
       {loading && <p style={{ textAlign: "center" }}>Yükleniyor...</p>}
-      {error && <p>{error}</p>}
       <Container>
         <Row className="justify-content-center">
           {recipes.map((recipe) => (
@@ -64,7 +65,7 @@ function Home() {
                 calories={recipe.calories}
                 ingredients={recipe.ingredients}
                 instructions={recipe.instructions}
-                cookTime = {recipe.cookTime}
+                cookTime={recipe.cookTime}
                 image={recipe.imageUrl}
               />
             </Col>
@@ -89,7 +90,7 @@ function Home() {
             cursor: "pointer",
           }}
         >
-          <CiSearch className="fs-4 text-dark fw-bolder searchItem"/>
+          <CiSearch className="fs-4 text-dark fw-bolder searchItem" />
         </button>
       </div>
       <input
@@ -114,7 +115,27 @@ function Home() {
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         }}
       />
+      {/* Toast */}
+      <Toast
+        style={{
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 1050,
+        }}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        delay={3000}
+        autohide
+        className="bg-danger"
+      >
+        <Toast.Header>
+          <strong className="me-auto">Error</strong>
+        </Toast.Header>
+        <Toast.Body>Invalid search! Please try again</Toast.Body>
+      </Toast>
     </div>
   );
 }
+
 export default Home;
