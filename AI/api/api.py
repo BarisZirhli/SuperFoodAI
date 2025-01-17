@@ -126,6 +126,30 @@ def calculate_bmi(weight, height):
     return bmi
 
 
+import re
+from difflib import get_close_matches
+
+
+def our_nlp(word: str) -> str:
+    food_related_words = []
+    try:
+        with open("../utils/nlpWords.txt", "r", encoding="utf-8") as file:
+            food_related_words = [line.strip().lower() for line in file if line.strip()]
+    except FileNotFoundError:
+        exit()
+    food_related_words = list(set(food_related_words))
+
+    word = word.lower()
+    word = re.sub(r"\d+", "", word)
+
+    normalized_word = word
+    suggestions = get_close_matches(
+        normalized_word, food_related_words, n=3, cutoff=0.65
+    )
+
+    return suggestions[0]
+
+
 def get_db_engine():
     try:
         engine = create_engine(
@@ -147,7 +171,7 @@ def get_recommendations(user_id: int, ingredients: str):
 
     user_query = ingredients.strip()
     conn = get_db_engine()
-
+    user_query = our_nlp(user_query)
     # Fetch user ratings
     query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"'
     df_ratings = pd.read_sql(query_ratings, conn)
@@ -188,6 +212,7 @@ def get_recommendations(user_id: int, ingredients: str):
     )
     query_vector = tfidf_vectorizer.transform([user_query])
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
+
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
 
@@ -217,7 +242,7 @@ def get_recommendations(user_id: int, ingredients: str):
     )
 
     # Kullanıcı benzerlik eşiği
-    user_similarity_threshold = 0.1  # Çok düşük bir oran belirlenebilir
+    user_similarity_threshold = 0.15  # Çok düşük bir oran belirlenebilir
     if user_similarities.mean() < user_similarity_threshold:
         # Eğer kullanıcı benzerlik oranı düşükse yalnızca içerik tabanlı sonuçlar döner
         return [
