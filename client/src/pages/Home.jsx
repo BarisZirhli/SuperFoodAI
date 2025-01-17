@@ -115,12 +115,12 @@ function Home() {
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         }}
       />
-      {/* Toast */}
       <Toast
         style={{
           position: "fixed",
           top: "1rem",
-          right: "1rem",
+          right: "50%",
+          transform:"translate(50%)",
           zIndex: 1050,
         }}
         show={showToast}
