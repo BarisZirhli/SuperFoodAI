@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { getFavoriteDetails } from "../API/api";
 import FavoriteRecipeCard from "../components/FavoriteRecipeCard";
 import { Row, Col, Pagination, Container } from "react-bootstrap";
-import { getRating } from "../API/api";
-import "../css/Favorites.css"
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -13,13 +12,13 @@ const Favorites = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const data = await getRating();
-        console.log(data)
+        const data = await getFavoriteDetails();
         setFavorites(data);
       } catch (err) {
         setError(err.message || "An error occurred while fetching data.");
       }
     };
+
     fetchFavorites();
   }, []);
 
@@ -43,9 +42,9 @@ const Favorites = () => {
 
   return (
     <Container>
-      <h2 className="favoriteRecipeTitle" style={{ textAlign: "center", marginBottom: "20px" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
         Favorite Recipes
-      </h2>
+      </h1>
       <Row className="container-row">
         {currentItems.map((recipe) => (
           <Col key={recipe.id} sm={10} md={6} lg={4} xl={3}>
@@ -59,7 +58,6 @@ const Favorites = () => {
               instructions={recipe.instructions}
               image={recipe.imageUrl}
               avgRate={recipe.avgRate}
-              rate={recipe.userRating}
             />
           </Col>
         ))}

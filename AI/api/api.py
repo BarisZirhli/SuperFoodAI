@@ -137,7 +137,6 @@ def get_db_engine():
         print(f"Error connecting to the database: {e}")
         return None
 
-
 @app.get("/search")
 def get_recommendations(user_id: int, ingredients: str):
     if not ingredients:
@@ -151,16 +150,18 @@ def get_recommendations(user_id: int, ingredients: str):
     # Fetch user ratings
     query_ratings = f'SELECT "UserId", "RecipeId", "Rating" FROM "Ratings"'
     df_ratings = pd.read_sql(query_ratings, conn)
+    print(f"Df_ratings: {df_ratings}")
     if df_ratings.empty:
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     # Fetch recipe details
     query_recipes = 'SELECT "id", "name", "instructions", "ingredients","cookTime", "calories", "imageUrl" FROM "Recipes"'
     df_recipes = pd.read_sql(query_recipes, conn)
-
+    print(f" Df_recipes: {df_recipes}")
     # Fetch user information
     query_user = f'SELECT "height", "weight" FROM "Users" WHERE "id" = {user_id}'
     user_info = pd.read_sql(query_user, conn)
+    print(f"User info: {user_info}")
 
     if user_info.empty:
         raise HTTPException(status_code=404, detail="User information not found")
@@ -170,24 +171,25 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
-    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
-    if os.path.exists(file_path):
-        recipedf = pd.read_csv(file_path, encoding="utf-8")
-        # print(recipedf)
-    else:
-        print(f"File not found: {file_path}")
-        recipedf = pd.DataFrame()
+    print(f"BMI: {bmi}")
 
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
         df_recipes["instructions"] + df_recipes["ingredients"]
     )
+    print(f"Tf idf matrix: {tfidf_matrix}")
+    
     query_vector = tfidf_vectorizer.transform([user_query])
+    print(f"Query vector: {query_vector}")
+
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
+    print(f"Ingredients similarities vector: {ingredient_similarities}")
+    
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
-
+    print(f"Ingredients similarities: {ingredient_similarities}")
+    
     df_recipes["content_similarity"] = ingredient_similarities[0]
     content_results = df_recipes.sort_values(
         by="content_similarity", ascending=False
@@ -200,23 +202,24 @@ def get_recommendations(user_id: int, ingredients: str):
     user_item_matrix = df_ratings.pivot(
         index="UserId", columns="RecipeId", values="Rating"
     ).fillna(0)
+    print(f" User item matrix: {user_item_matrix}")
 
-    # Kullanıcı matrisi düşükse yalnızca içerik önerileri
     user_similarity_matrix = cosine_similarity(user_item_matrix)
+
     user_similarity_df = pd.DataFrame(
         user_similarity_matrix,
         index=user_item_matrix.index,
         columns=user_item_matrix.index,
     )
+    print(f"User similarity df : {user_similarity_df}")
 
     user_similarities = (
         user_similarity_df[user_id].drop(user_id).sort_values(ascending=False)
     )
+    print(f"User similarities: {user_similarities}")
 
-    # Kullanıcı benzerlik eşiği
-    user_similarity_threshold = 0.1  # Çok düşük bir oran belirlenebilir
+    user_similarity_threshold = 0.1
     if user_similarities.mean() < user_similarity_threshold:
-        # Eğer kullanıcı benzerlik oranı düşükse yalnızca içerik tabanlı sonuçlar döner
         return [
             {
                 "recipeId": int(row["id"]),
@@ -230,8 +233,8 @@ def get_recommendations(user_id: int, ingredients: str):
             for _, row in content_results.iterrows()
         ]
 
-    # Kullanıcı benzerlik yüksekse collaborative filtering yapılır
     similar_users = user_similarities.index[:5]
+    print(f"Similar users: {similar_users}")
 
     collaborative_recipes = []
     current_user_ratings = user_item_matrix.loc[user_id]
@@ -244,40 +247,44 @@ def get_recommendations(user_id: int, ingredients: str):
                 or current_user_ratings[recipe_id] == 0
             ):
                 collaborative_recipes.append(recipe_id)
+        print(f"Collaborative recipes: {collaborative_recipes}")
 
-    collaborative_recipes = list(set(collaborative_recipes))  # Unique recipe IDs
-    collaborative_results = df_recipes[df_recipes["id"].isin(collaborative_recipes)]
+    collaborative_recipes = list(set(collaborative_recipes))
 
     # Apply BMI-based filtering
     if bmi < 18.5:
-        collaborative_results = collaborative_results[
-            collaborative_results["calories"] > 400
+        collaborative_results = df_recipes[
+            df_recipes["calories"] > 400
         ]
     elif 18.5 <= bmi < 24.9:
-        collaborative_results = collaborative_results[
-            (collaborative_results["calories"] > 300)
-            & (collaborative_results["calories"] < 700)
+        collaborative_results = df_recipes[
+            (df_recipes["calories"] > 300) & (df_recipes["calories"] < 700)
         ]
     elif 25 <= bmi < 29.9:
-        collaborative_results = collaborative_results[
-            collaborative_results["calories"] < 500
+        collaborative_results = df_recipes[
+            df_recipes["calories"] < 500
         ]
     else:
-        collaborative_results = collaborative_results[
-            collaborative_results["calories"] < 400
+        collaborative_results = df_recipes[
+            df_recipes["calories"] < 400
         ]
 
-    # Combine and rank recommendations
     combined_results = pd.concat(
         [content_results, collaborative_results]
     ).drop_duplicates(subset="id")
-    print(combined_results)
-    combined_results["final_similarity"] = combined_results["content_similarity"]
-    combined_results = combined_results.sort_values(
-        by="final_similarity", ascending=False
-    ).head(4)
 
-    # Format results for response
+    query_favorite = f'SELECT "RecipeId" FROM "FavoriteRecipes" WHERE "UserId" = {user_id}'
+    df_favorite_recipes = pd.read_sql(query_favorite, conn)
+
+    favorite_recipe_ids = df_favorite_recipes["RecipeId"].tolist()
+
+    combined_results = combined_results[~combined_results["id"].isin(favorite_recipe_ids)]
+
+    combined_results["final_similarity"] = combined_results["content_similarity"]
+    combined_results = combined_results.sort_values(by="final_similarity", ascending=False)
+
+    top_four_recommendations = combined_results.head(4)
+
     recommendations = [
         {
             "recipeId": int(row["id"]),
@@ -288,11 +295,21 @@ def get_recommendations(user_id: int, ingredients: str):
             "cookTime": row["cookTime"],
             "imageUrl": row.get("imageUrl", None),
         }
-        for _, row in combined_results.iterrows()
+        for _, row in top_four_recommendations.iterrows()
     ]
 
-    return recommendations
+    if 'favorite_recipe_id' in ingredients:
+        favorite_recipe_id = int(ingredients.split(":")[1])
+        query_add_favorite = f"""
+        INSERT INTO "FavoriteRecipes" ("UserId", "RecipeId")
+        VALUES ({user_id}, {favorite_recipe_id})
+        """
+        try:
+            pd.read_sql(query_add_favorite, conn)
+        except Exception as e:
+            print(f"Error adding favorite: {e}")
 
+    return recommendations
 
 if __name__ == "__main__":
     import uvicorn
