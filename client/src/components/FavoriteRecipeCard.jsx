@@ -5,10 +5,9 @@ import { FaHeart } from "react-icons/fa";
 import { deleteFavoriteRecipe } from "../API/api";
 import "../css/FavoriteRecipeCard.css";
 import { addRating, getRating } from "../API/api";
-import { CiStar } from "react-icons/ci"; // boş yıldız
-import { FaStar } from "react-icons/fa"; // tam yıldız
-import { FaStarHalfAlt } from "react-icons/fa"; // yarım yıldız
-
+import { CiStar } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { FaStarHalfAlt } from "react-icons/fa";
 import {
   parseIngredients,
   parseInstructions,
@@ -109,13 +108,13 @@ function FavoriteRecipeCard({
             <Card.Text className="caloriesCard">
               <strong>Calories:</strong> {calories} kcal
             </Card.Text>
-            {/* Rating Section */}
-            <div className="d-flex justify-content-center mb-5">
+           {/* Rating Section */}
+           <div className="d-flex justify-content-center mb-5">
               <div className="text-center mb-2">
                 <div className="rating d-flex">
                   {Array.from({ length: 5 }, (_, index) => (
                     <span key={index}>
-                      {index < rate ? (
+                      {index < avgRate ? (
                         <FaStar color="gold" size={20} />
                       ) : (
                         <CiStar color="gray" size={20} />
