@@ -22,7 +22,7 @@ function FavoriteRecipeCard({
   ingredients,
   instructions,
   image,
-  avgRate,
+  avgRate
 }) {
   const [flipped, setFlipped] = useState(false);
   const [showToast, setShowToast] = useState(false);

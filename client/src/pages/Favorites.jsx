@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getFavoriteDetails } from "../API/api";
+import { getFavoriteDetails, getRating } from "../API/api";
 import FavoriteRecipeCard from "../components/FavoriteRecipeCard";
 import { Row, Col, Pagination, Container } from "react-bootstrap";
 import '../css/Favorites.css';
@@ -14,6 +14,7 @@ const Favorites = () => {
     const fetchFavorites = async () => {
       try {
         const data = await getFavoriteDetails();
+        console.log(data)
         setFavorites(data);
       } catch (err) {
         setError(err.message || "An error occurred while fetching data.");
@@ -58,7 +59,7 @@ const Favorites = () => {
               ingredients={recipe.ingredients}
               instructions={recipe.instructions}
               image={recipe.imageUrl}
-              avgRate={recipe.avgRate}
+              avgRate = {recipe.avgRate}
             />
           </Col>
         ))}

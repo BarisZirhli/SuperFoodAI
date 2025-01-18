@@ -4,7 +4,8 @@ const recipe = require("../models/recipe");
 
 const addRating = async (req, res) => {
   try {
-    const { userId, recipeId, rating } = req.body;
+    const {userId} = req.params;
+    const { recipeId, rating } = req.body;
     const existingUserFavoriteList = await favoriteRecipe.findOne({
       where: {
         UserId: userId,
@@ -57,7 +58,6 @@ const getRating = async (req, res) => {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    // Fetch ratings for the user
     const ratings = await Rating.findAll({
       where: {
         UserId: userId,
@@ -65,12 +65,10 @@ const getRating = async (req, res) => {
       attributes: ["RecipeId", "Rating"],
     });
 
-    // If no ratings, return an empty array
     if (ratings.length === 0) {
       return res.status(200).json([]);
     }
 
-    // Extract RecipeIds from ratings
     const recipeIds = ratings.map((rating) => rating.RecipeId);
 
     // Fetch the recipes based on RecipeIds

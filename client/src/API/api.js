@@ -35,11 +35,9 @@ export const login = async (formData) => {
 
 export const fetchRecipesWithUser = async (query) => {
   try {
-    // Kullanıcı token'ını çözümleyip userId alıyoruz
     const token = await tokenToId();
     const user_id = token.userId;
 
-    // API çağrısı
     const response = await axios.get("http://localhost:8000/search", {
       params: { ingredients: query, user_id: user_id },
     });
@@ -48,14 +46,12 @@ export const fetchRecipesWithUser = async (query) => {
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
-    if (error.response.status == 422 && error.response.status === 400) {
-      alert("Geçersiz prompt! Lütfen farklı bir giriş yapmayı deneyin.");
+    if (error.response.status == 422 || error.response.status === 404) {
+      throw new Error("No recipes found for the given query.");
     } else {
       console.error("Error fetching recipes:", error);
-      alert("Tarifler alınırken bir hata oluştu. Daha sonra tekrar deneyin.");
+      throw new Error("Failed to fetch recipes.");
     }
-
-    return [];
   }
 };
 
@@ -67,6 +63,7 @@ export const addFavoriteRecipes = async (recipeId) => {
       userId: userId,
       recipeId: recipeId,
     });
+    console.log(response)
     return response;
   } catch (error) {
     if (error.response) {
@@ -81,10 +78,9 @@ export const addRating = async (recipeId, rating) => {
   try {
     const token = await tokenToId();
     const userId = token.userId;
-    const response = await api.post("/api/rating/addRating", {
-      userId: userId,
+    const response = await api.post(`/api/rating/addRating/${userId}`, {
       recipeId: recipeId,
-      ratingScore: rating,
+      userRating: rating,
     });
     return response;
   } catch (error) {
@@ -165,6 +161,7 @@ export const deleteFavoriteRecipe = async (recipeId) => {
       }
     );
     console.log(userId, recipeId);
+    console.log(response)
     return response;
   } catch (error) {
     if (error.response) {

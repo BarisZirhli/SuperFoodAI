@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "../components/RecipeCard";
-import { Container, Row, Col, Toast } from "react-bootstrap";
+import { Container, Row, Col, Toast, ToastContainer } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/Home.css";
 import { fetchRecipesWithUser } from "../API/api";
@@ -53,7 +53,7 @@ function Home() {
 
   return (
     <div className="recipeListContainer">
-      {loading && <p style={{ textAlign: "center" }}>Yükleniyor...</p>}
+      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
       <Container>
         <Row className="justify-content-center">
           {recipes.map((recipe) => (
@@ -67,6 +67,7 @@ function Home() {
                 instructions={recipe.instructions}
                 cookTime={recipe.cookTime}
                 image={recipe.imageUrl}
+                avgRate = {recipe.avgRate}
               />
             </Col>
           ))}
@@ -119,8 +120,8 @@ function Home() {
         style={{
           position: "fixed",
           top: "1rem",
-          right: "50%",
-          transform:"translate(50%)",
+          left: "50%",
+          transform: "translateX(-50%)",
           zIndex: 1050,
         }}
         show={showToast}

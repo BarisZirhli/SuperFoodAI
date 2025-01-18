@@ -155,7 +155,7 @@ def get_recommendations(user_id: int, ingredients: str):
         raise HTTPException(status_code=404, detail="User has no ratings yet")
 
     # Fetch recipe details
-    query_recipes = 'SELECT "id", "name", "instructions", "ingredients","cookTime", "calories", "imageUrl" FROM "Recipes"'
+    query_recipes = 'SELECT "id", "name", "instructions", "ingredients","cookTime", "calories", "imageUrl", "avgRate" FROM "Recipes"'
     df_recipes = pd.read_sql(query_recipes, conn)
     print(f" Df_recipes: {df_recipes}")
     # Fetch user information
@@ -172,11 +172,18 @@ def get_recommendations(user_id: int, ingredients: str):
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
+    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
+    if os.path.exists(file_path):
+        recipedf = pd.read_csv(file_path, encoding="utf-8")
+
+    else:
+        print(f"File not found: {file_path}")
+        recipedf = pd.DataFrame()
 
     # --- Content-Based Filtering ---
     tfidf_vectorizer = TfidfVectorizer(stop_words=turkish_stop_words)
     tfidf_matrix = tfidf_vectorizer.fit_transform(
-        df_recipes["instructions"] + df_recipes["ingredients"]
+        df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["Keywords"]
     )
     print(f"Tf idf matrix: {tfidf_matrix}")
     
@@ -229,6 +236,7 @@ def get_recommendations(user_id: int, ingredients: str):
                 "instructions": row["instructions"],
                 "cookTime": row["cookTime"],
                 "imageUrl": row.get("imageUrl", None),
+                "avgRate" : row["avgRate"]
             }
             for _, row in content_results.iterrows()
         ]
@@ -294,6 +302,7 @@ def get_recommendations(user_id: int, ingredients: str):
             "instructions": row["instructions"],
             "cookTime": row["cookTime"],
             "imageUrl": row.get("imageUrl", None),
+            "avgRate" : row["avgRate"]
         }
         for _, row in top_four_recommendations.iterrows()
     ]
