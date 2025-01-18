@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Toast,ToastContainer } from "react-bootstrap"; // Toast bileşenini ekledik
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
-import { addFavoriteRecipes, tokenToId } from "../API/api";
+import { addFavoriteRecipes } from "../API/api";
 import {
   parseIngredients,
   parseInstructions,
@@ -21,6 +21,7 @@ function RecipeCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   const [message, setMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   const handleCardClick = () => {
     setFlipped((prev) => !prev);
@@ -34,12 +35,13 @@ function RecipeCard({
       if (response && response.message) {
         setMessage(response.message);
       } else {
-        setMessage("Recipe removed from favorites!");
+        setMessage(`${title} added from favorites!`);
       }
     } catch (error) {
       console.error(`${error}`);
       setMessage("An error occurred while removing the recipe.");
     }
+    setShowToast(true);
   };
 
   const ingredientList = parseIngredients(ingredients);
@@ -49,7 +51,20 @@ function RecipeCard({
   const cookTimes = convertCookingTime(cookTime);
 
   return (
-    <div style={{ perspective: "1000px" }}>
+    <div>
+      <ToastContainer position="bottom-start" className="p-3">
+        <Toast
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+          style={{backgroundColor:"#3f2fee", color:"white"}}
+        >
+          <Toast.Body>{message}</Toast.Body>
+        </Toast>
+      </ToastContainer>
+
+    <div style={{ perspective: "1000px", position: "relative" }}>
       <div
         onClick={handleCardClick}
         style={{
@@ -142,6 +157,7 @@ function RecipeCard({
           </Card.Body>
         </Card>
       </div>
+    </div>
     </div>
   );
 }
