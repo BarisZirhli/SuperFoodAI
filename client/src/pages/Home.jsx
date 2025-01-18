@@ -13,7 +13,7 @@ function Home() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [showToast, setShowToast] = useState(false); // Toast görünürlüğü
+  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function Home() {
         } catch (err) {
           console.error("An error occurred", err);
           setError("An error occurred while fetching recipes.");
-          setShowToast(true); // Toast'ı göster
+          setShowToast(true);
         } finally {
           setLoading(false);
         }

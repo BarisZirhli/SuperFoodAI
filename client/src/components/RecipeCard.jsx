@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Toast,ToastContainer } from "react-bootstrap"; // Toast bileşenini ekledik
+import { Card, Toast,ToastContainer } from "react-bootstrap"; 
 import "../css/RecipeCard.css";
 import { IoHeartCircleOutline } from "react-icons/io5";
 import { addFavoriteRecipes } from "../API/api";
@@ -35,7 +35,7 @@ function RecipeCard({
       if (response && response.message) {
         setMessage(response.message);
       } else {
-        setMessage(`${title} added from favorites!`);
+        setMessage(`${title} added to favorites!`);
       }
     } catch (error) {
       console.error(`${error}`);
