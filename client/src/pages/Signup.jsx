@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert, Row, Col } from "react-bootstrap";
-import { signup } from "../API/api"; // signup işlevini api.js'den import et
+import { signup } from "../API/api"; 
 import "../css/Signup.css"
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -78,7 +78,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="container registerContainer d-flex flex-column justify-content-center bg-light p-5 px-5 rounded">
+    <div className="container registerContainer d-flex flex-column justify-content-center bg-light p-4 px-5 rounded">
       <div>
         <h2 className="mb-4 fs-4 text-center">Register to SuperFoodAI</h2>
         {success && <Alert variant="success">Registration successful!</Alert>}
@@ -236,7 +236,6 @@ const Signup = () => {
             </Col>
           </Row>
         </Form>
-        
         <div className="mt-4 text-center">
           <span>You have already an account? </span>
           <a href="/login" className="text-decoration-none">
