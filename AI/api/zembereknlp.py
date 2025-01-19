@@ -88,13 +88,11 @@ nltk.download("punkt")
 nltk.download("wordnet")
 
 
-# Stopwords ve lemmatizer
 stop_words = list(
     set(turkish_stop_words)
-)  # Burada turkish_stop_words listeyi sağlayan bir kaynağa ihtiyacınız var
+)
 lemmatizer = WordNetLemmatizer()
 
-# Yiyeceklerle ilgili kelimeler (örnek olarak)
 food_related_words = []
 try:
     with open("../utils/nlpWords.txt", "r", encoding="utf-8") as file:
@@ -105,7 +103,6 @@ except FileNotFoundError:
 food_related_words = list(set(food_related_words))
 
 
-# Metin işleme ve normalizasyon fonksiyonu
 def preprocess_text(text):
     text = text.lower()
 

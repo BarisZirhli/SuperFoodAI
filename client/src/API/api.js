@@ -142,7 +142,7 @@ export const getFavoriteDetails = async () => {
     const response = await api.get(
       `/api/favorite/getFavoriteDetails/${userId}`
     );
-    return response.data.reverse();
+    return response.data;
   } catch (err) {
     console.error("Error fetching favorites:", err);
     throw new Error(`${err}`);

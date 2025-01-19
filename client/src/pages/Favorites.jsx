@@ -14,15 +14,16 @@ const Favorites = () => {
     const fetchFavorites = async () => {
       try {
         const data = await getFavoriteDetails();
-        console.log(data)
-        setFavorites(data);
+        console.log(data);
+        setFavorites((prevFavorites) => [...data, ...prevFavorites]);
       } catch (err) {
         setError(err.message || "An error occurred while fetching data.");
       }
     };
-
+  
     fetchFavorites();
   }, []);
+  
 
   const totalPages = Math.ceil(favorites.length / itemsPerPage);
   const currentItems = favorites.slice(

@@ -98,7 +98,6 @@ const getRating = async (req, res) => {
 
     return res.status(200).json(recipesWithRating);
   } catch (error) {
-    console.error("Error fetching ratings and recipes:", error);
     return res.status(500).json({
       message: "Failed to fetch ratings and recipes.",
       error: error.message,

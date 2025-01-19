@@ -236,6 +236,13 @@ const Signup = () => {
             </Col>
           </Row>
         </Form>
+        
+        <div className="mt-4 text-center">
+          <span>You have already an account? </span>
+          <a href="/login" className="text-decoration-none">
+            Sign In
+          </a>
+        </div>
       </div>
     </div>
   );

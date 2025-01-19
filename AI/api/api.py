@@ -9,6 +9,8 @@ from nltk.stem import WordNetLemmatizer
 import string
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
+import re
+from difflib import get_close_matches
 
 turkish_stop_words = [
     "a",
@@ -86,15 +88,44 @@ nltk.download("wordnet")
 stop_words = list(set(turkish_stop_words))
 lemmatizer = WordNetLemmatizer()
 
+food_related_words = []
+try:
+    with open(r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\utils\nlpWords.txt", "r", encoding="utf-8") as file:
+        food_related_words = [line.strip().lower() for line in file if line.strip()]
+except FileNotFoundError:
+    print("Hata: 'nlpWords.txt' dosyası bulunamadı.")
+    exit()
+food_related_words = list(set(food_related_words))
 
+
+# preprocessing 
 def preprocess_text(text):
-    text = text.lower()
-    text = text.translate(str.maketrans("", "", string.punctuation))
-    text = " ".join(
-        [lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words]
-    )
-    return text
+    # Metni virgüle göre ayır
+    phrases = [phrase.strip() for phrase in text.split(",")]
 
+    results = []
+    for phrase in phrases:
+        original_phrase = phrase.lower()
+        phrase = re.sub(r"\d+", "", original_phrase)  # Sayıları kaldır
+        phrase = phrase.translate(str.maketrans("", "", string.punctuation)) 
+
+        words = phrase.split()
+        processed_words = [
+            lemmatizer.lemmatize(word) for word in words if word not in stop_words
+        ]
+
+        close_matches = get_close_matches(" ".join(processed_words), food_related_words, n=3, cutoff=0.70)
+
+        if not close_matches:
+            results.append(f"'{original_phrase}' yanlış yazılmış ancak yiyeceklerle ilgili öneri bulunamadı.")
+        else:
+            suggestion_text = f"'{original_phrase}' yanlış yazılmış. Yiyeceklerle ilgili öneriler: {', '.join(close_matches)}"
+            results.append(suggestion_text)
+
+    return "".join(results[0])
+
+# word = "limonlu turto,peynir rulalaro, bastırma"
+# print(preprocess_text(word))
 
 app = FastAPI()
 
@@ -129,7 +160,7 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
@@ -145,7 +176,9 @@ def get_recommendations(user_id: int, ingredients: str):
             status_code=400, detail="Ingredients field cannot be empty!"
         )
 
-    user_query = ingredients.strip()
+    user_query = preprocess_text(ingredients)
+    print(f"User query: {user_query}");
+    print("{preprocess_text(user_query)}")
     conn = get_db_engine()
 
     # Fetch user ratings
@@ -173,7 +206,7 @@ def get_recommendations(user_id: int, ingredients: str):
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
-    file_path = r"C:\Users\pc\Desktop\SuperFoodAI-main\SuperFoodAI\AI\api\recipes.csv"
+    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
 
