@@ -126,7 +126,7 @@ function Home() {
         }}
         show={showToast}
         onClose={() => setShowToast(false)}
-        delay={3000}
+        delay={2000}
         autohide
         className="bg-danger"
       >

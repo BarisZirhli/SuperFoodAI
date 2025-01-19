@@ -114,7 +114,7 @@ def preprocess_text(text):
             lemmatizer.lemmatize(word) for word in words if word not in stop_words
         ]
 
-        close_matches = get_close_matches(" ".join(processed_words), food_related_words, n=3, cutoff=0.70)
+        close_matches = get_close_matches(" ".join(processed_words), food_related_words, n=3, cutoff=0.65)
 
         if not close_matches:
             results.append(f"'{original_phrase}' yanlış yazılmış ancak yiyeceklerle ilgili öneri bulunamadı.")
@@ -342,7 +342,7 @@ def get_recommendations(user_id: int, ingredients: str):
         }
         for _, row in top_four_recommendations.iterrows()
     ]
-
+    print(f"Recommendations : {recommendations}")
     if "favorite_recipe_id" in ingredients:
         favorite_recipe_id = int(ingredients.split(":")[1])
         query_add_favorite = f"""
@@ -353,7 +353,6 @@ def get_recommendations(user_id: int, ingredients: str):
             pd.read_sql(query_add_favorite, conn)
         except Exception as e:
             print(f"Error adding favorite: {e}")
-
     return recommendations
 
 

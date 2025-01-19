@@ -60,7 +60,7 @@ function RecipeCard({
         <Toast
           onClose={() => setShowToast(false)}
           show={showToast}
-          delay={3000}
+          delay={2000}
           autohide
           style={{ backgroundColor: "#3f2fee", color: "white" }}
         >
