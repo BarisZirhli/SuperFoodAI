@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { login, tokenToId } from "../API/api";
-
+import "../css/Login.css"
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -79,7 +79,7 @@ const Login = () => {
   }, [isLoggedIn, navigate]);
 
   return (
-    <div className="container registerContainer mt-5 d-flex flex-column justify-content-center bg-light p-5 px-5 rounded">
+    <div className="container loginContainer mt-5 d-flex flex-column justify-content-center bg-light p-5 px-5 rounded">
       <div className="p-3">
         <h2 className="mb-4 text-center">Login</h2>
         {success && <Alert variant="success">Login successful!</Alert>}

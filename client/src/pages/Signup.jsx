@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Form, Button, Alert, Row, Col } from "react-bootstrap";
 import { signup } from "../API/api"; // signup işlevini api.js'den import et
-
+import "../css/Signup.css"
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
