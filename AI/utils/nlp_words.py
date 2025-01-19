@@ -1,8 +1,8 @@
 import csv
 import re
 
-csv_file_name = "recipes.csv"
-txt_file_name = "nlpWords.txt"
+csv_file_name = "newRecipeUpdate.csv"
+txt_file_name = "nlpWords2.txt"
 nlpList = []
 
 with open(csv_file_name, "r", encoding="utf-8") as file:
@@ -10,14 +10,19 @@ with open(csv_file_name, "r", encoding="utf-8") as file:
 
     for row in csv_reader:
 
-        temp = row["RecipeIngredientParts"]
-        results = re.findall(r'"(.*?)"', temp)
-        for i in results:
-            nlpList.append(i + " ")
+        if "name" not in row:
+            print("The 'name' column is missing in the CSV file.")
+            break
+
+        temp = row["name"]
+        temp = re.sub(r"[^a-zA-Z0-9\s]", "", temp)
+        print(temp.strip())
+
+        nlpList.append(temp)
 
 nlpList = list(set(nlpList))
 
+
 with open(txt_file_name, "w", encoding="utf-8") as file:
-    for i in nlpList:
-        a = str(i).replace(",", "").strip()
-        file.write(a + "\n")
+    for word in nlpList:
+        file.write(word + "\n")

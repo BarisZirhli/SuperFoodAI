@@ -129,13 +129,14 @@ def calculate_bmi(weight, height):
 def get_db_engine():
     try:
         engine = create_engine(
-            "postgresql+psycopg2://postgres:1234@localhost:5432/SuperFoodDb"
+            "postgresql+psycopg2://postgres:mitaka@localhost:5432/SuperFoodDb"
         )
         print("Successfully connected to the database!")
         return engine
     except Exception as e:
         print(f"Error connecting to the database: {e}")
         return None
+
 
 @app.get("/search")
 def get_recommendations(user_id: int, ingredients: str):
@@ -172,7 +173,7 @@ def get_recommendations(user_id: int, ingredients: str):
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
-    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
+    file_path = r"C:\Users\pc\Desktop\SuperFoodAI-main\SuperFoodAI\AI\api\recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
 
@@ -185,18 +186,20 @@ def get_recommendations(user_id: int, ingredients: str):
     tfidf_matrix = tfidf_vectorizer.fit_transform(
         df_recipes["instructions"] + df_recipes["ingredients"] + recipedf["Keywords"]
     )
+
+    print(f"recipedf : {recipedf['Keywords']}")
     print(f"Tf idf matrix: {tfidf_matrix}")
-    
+
     query_vector = tfidf_vectorizer.transform([user_query])
     print(f"Query vector: {query_vector}")
 
     ingredient_similarities = cosine_similarity(query_vector, tfidf_matrix)
     print(f"Ingredients similarities vector: {ingredient_similarities}")
-    
+
     if ingredient_similarities.max() < 0.1:
         raise HTTPException(status_code=404, detail="No similar recipes found")
     print(f"Ingredients similarities: {ingredient_similarities}")
-    
+
     df_recipes["content_similarity"] = ingredient_similarities[0]
     content_results = df_recipes.sort_values(
         by="content_similarity", ascending=False
@@ -236,7 +239,7 @@ def get_recommendations(user_id: int, ingredients: str):
                 "instructions": row["instructions"],
                 "cookTime": row["cookTime"],
                 "imageUrl": row.get("imageUrl", None),
-                "avgRate" : row["avgRate"]
+                "avgRate": row["avgRate"],
             }
             for _, row in content_results.iterrows()
         ]
@@ -261,35 +264,35 @@ def get_recommendations(user_id: int, ingredients: str):
 
     # Apply BMI-based filtering
     if bmi < 18.5:
-        collaborative_results = df_recipes[
-            df_recipes["calories"] > 400
-        ]
+        collaborative_results = df_recipes[df_recipes["calories"] > 400]
     elif 18.5 <= bmi < 24.9:
         collaborative_results = df_recipes[
             (df_recipes["calories"] > 300) & (df_recipes["calories"] < 700)
         ]
     elif 25 <= bmi < 29.9:
-        collaborative_results = df_recipes[
-            df_recipes["calories"] < 500
-        ]
+        collaborative_results = df_recipes[df_recipes["calories"] < 500]
     else:
-        collaborative_results = df_recipes[
-            df_recipes["calories"] < 400
-        ]
+        collaborative_results = df_recipes[df_recipes["calories"] < 400]
 
     combined_results = pd.concat(
         [content_results, collaborative_results]
     ).drop_duplicates(subset="id")
 
-    query_favorite = f'SELECT "RecipeId" FROM "FavoriteRecipes" WHERE "UserId" = {user_id}'
+    query_favorite = (
+        f'SELECT "RecipeId" FROM "FavoriteRecipes" WHERE "UserId" = {user_id}'
+    )
     df_favorite_recipes = pd.read_sql(query_favorite, conn)
 
     favorite_recipe_ids = df_favorite_recipes["RecipeId"].tolist()
 
-    combined_results = combined_results[~combined_results["id"].isin(favorite_recipe_ids)]
+    combined_results = combined_results[
+        ~combined_results["id"].isin(favorite_recipe_ids)
+    ]
 
     combined_results["final_similarity"] = combined_results["content_similarity"]
-    combined_results = combined_results.sort_values(by="final_similarity", ascending=False)
+    combined_results = combined_results.sort_values(
+        by="final_similarity", ascending=False
+    )
 
     top_four_recommendations = combined_results.head(4)
 
@@ -302,12 +305,12 @@ def get_recommendations(user_id: int, ingredients: str):
             "instructions": row["instructions"],
             "cookTime": row["cookTime"],
             "imageUrl": row.get("imageUrl", None),
-            "avgRate" : row["avgRate"]
+            "avgRate": row["avgRate"],
         }
         for _, row in top_four_recommendations.iterrows()
     ]
 
-    if 'favorite_recipe_id' in ingredients:
+    if "favorite_recipe_id" in ingredients:
         favorite_recipe_id = int(ingredients.split(":")[1])
         query_add_favorite = f"""
         INSERT INTO "FavoriteRecipes" ("UserId", "RecipeId")
@@ -319,6 +322,7 @@ def get_recommendations(user_id: int, ingredients: str):
             print(f"Error adding favorite: {e}")
 
     return recommendations
+
 
 if __name__ == "__main__":
     import uvicorn

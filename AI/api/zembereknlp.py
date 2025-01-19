@@ -88,9 +88,10 @@ nltk.download("punkt")
 nltk.download("wordnet")
 
 
-
 # Stopwords ve lemmatizer
-stop_words = list(set(turkish_stop_words))  # Burada turkish_stop_words listeyi sağlayan bir kaynağa ihtiyacınız var
+stop_words = list(
+    set(turkish_stop_words)
+)  # Burada turkish_stop_words listeyi sağlayan bir kaynağa ihtiyacınız var
 lemmatizer = WordNetLemmatizer()
 
 # Yiyeceklerle ilgili kelimeler (örnek olarak)
@@ -103,6 +104,7 @@ except FileNotFoundError:
     exit()
 food_related_words = list(set(food_related_words))
 
+
 # Metin işleme ve normalizasyon fonksiyonu
 def preprocess_text(text):
     text = text.lower()
@@ -113,16 +115,18 @@ def preprocess_text(text):
 
     words = text.split()
     processed_words = [
-        lemmatizer.lemmatize(word)
-        for word in words if word not in stop_words
+        lemmatizer.lemmatize(word) for word in words if word not in stop_words
     ]
-    
+
     return " ".join(processed_words)
+
 
 def get_suggestions(word):
     normalized_word = preprocess_text(word)
-    suggestions = get_close_matches(normalized_word, food_related_words, n=3, cutoff=0.65)
-    
+    suggestions = get_close_matches(
+        normalized_word, food_related_words, n=3, cutoff=0.65
+    )
+
     if not suggestions:
         print(f"'{word}' yanlış yazılmış ancak yiyeceklerle ilgili öneri bulunamadı.")
     else:
@@ -130,5 +134,6 @@ def get_suggestions(word):
         for suggestion in suggestions:
             print(f"- {suggestion}")
 
-word = "turta"
+
+word = "fuz"
 get_suggestions(word)
