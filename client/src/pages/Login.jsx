@@ -100,7 +100,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               isInvalid={!!errors.email}
-              required
+              
             />
             <Form.Control.Feedback type="invalid">
               {errors.email}
@@ -116,7 +116,7 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               isInvalid={!!errors.password}
-              required
+              
             />
             <Form.Control.Feedback type="invalid">
               {errors.password}

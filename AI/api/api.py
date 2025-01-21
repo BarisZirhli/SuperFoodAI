@@ -100,13 +100,12 @@ food_related_words = list(set(food_related_words))
 
 # preprocessing 
 def preprocess_text(text):
-    # Metni virgüle göre ayır
     phrases = [phrase.strip() for phrase in text.split(",")]
 
     results = []
     for phrase in phrases:
         original_phrase = phrase.lower()
-        phrase = re.sub(r"\d+", "", original_phrase)  # Sayıları kaldır
+        phrase = re.sub(r"\d+", "", original_phrase)
         phrase = phrase.translate(str.maketrans("", "", string.punctuation)) 
 
         words = phrase.split()
@@ -114,7 +113,7 @@ def preprocess_text(text):
             lemmatizer.lemmatize(word) for word in words if word not in stop_words
         ]
 
-        close_matches = get_close_matches(" ".join(processed_words), food_related_words, n=3, cutoff=0.65)
+        close_matches = get_close_matches(" ".join(processed_words), food_related_words, n=3, cutoff=0.7)
 
         if not close_matches:
             results.append(f"'{original_phrase}' yanlış yazılmış ancak yiyeceklerle ilgili öneri bulunamadı.")

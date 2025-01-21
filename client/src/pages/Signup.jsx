@@ -170,7 +170,7 @@ const Signup = () => {
                 <Form.Control
                   type="number"
                   name="age"
-                  placeholder="Enter your weight (80)"
+                  placeholder="Enter your age (25)"
                   value={formData.age}
                   onChange={handleChange}
                   isInvalid={!!errors.age}
