@@ -69,6 +69,7 @@
         <li><strong>FastAPI:</strong> A fast and scalable web framework for APIs</li>
         <li><strong>Node.js:</strong> JavaScript runtime for backend applications</li>
         <li><strong>Express.js:</strong> Lightweight and flexible web application framework</li>
+        <li><strong>Sequelize:</strong> ORM for Node.js</li>
         <li><strong>JWT (JSON Web Tokens):</strong> For authentication and session management</li>
     </ul>
     <h3>AI Module</h3>
@@ -78,12 +79,11 @@
     <li><strong>nltk:</strong> For natural language processing tasks such as tokenization, lemmatization, and stopword removal</li>
     <li><strong>googletrans:</strong> For translating data to Turkish</li>
     <li><strong>difflib:</strong> For finding close matches in text data</li>
+    <li><strong>SQLAlchemy:</strong> ORM (Object Relational Mapping) for Python</li>
   </ul>
     <h3>Database</h3>
     <ul>
         <li><strong>PostgreSQL:</strong> A robust and scalable relational database</li>
-        <li><strong>SQLAlchemy:</strong> ORM (Object Relational Mapping) for Python</li>
-        <li><strong>Sequelize:</strong> ORM for Node.js</li>
     </ul>
     <h3>Testing</h3>
     <ul>
@@ -98,5 +98,3 @@
     <img src="https://github.com/user-attachments/assets/301c732b-93b8-4559-b061-e3dcb9ffe755"/>
     <img src="https://github.com/user-attachments/assets/a2338491-09b2-4d9e-9046-d7d6a6506068"/>
     <img src="https://github.com/user-attachments/assets/7f54fede-eda5-44b1-a2de-0351cdaf739b"/>
-    
-
