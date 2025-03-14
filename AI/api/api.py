@@ -13,72 +13,19 @@ import re
 from difflib import get_close_matches
 
 turkish_stop_words = [
-    "a",
-    "acaba",
-    "altı",
-    "ama",
-    "ancak",
-    "bazen",
-    "bazı",
-    "belki",
-    "ben",
-    "benden",
-    "beni",
-    "benim",
-    "bir",
-    "biraz",
-    "birçoğu",
-    "biri",
-    "birkaç",
-    "biz",
-    "bizden",
-    "bize",
-    "bizi",
-    "bizim",
-    "bu",
-    "bunun",
-    "bunu",
-    "bunu",
-    "her",
-    "herhangi",
-    "hem",
-    "hep",
-    "için",
-    "işte",
-    "kadar",
-    "karşı",
-    "kendi",
-    "kendine",
-    "ki",
-    "mı",
-    "mi",
-    "çok",
-    "çünkü",
-    "de",
-    "den",
-    "daha",
-    "diğer",
-    "ile",
-    "ilgili",
-    "çok",
-    "gibi",
-    "hem",
-    "henüz",
-    "hep",
-    "herhangi",
-    "hiç",
-    "iç",
-    "şu",
-    "şu",
-    "şöyle",
-    "tüm",
-    "tümü",
-    "ya",
-    "yani",
-    "yok",
-    "ve",
-    "veya",
-    "üzere",
+    "a", "acaba", "altı", "ama", "ancak",
+    "bazen", "bazı", "belki", "ben", "benden",
+    "beni", "benim", "bir", "biraz", "birçoğu", 
+    "biri", "birkaç", "biz", "bizden", "bize",
+    "bizi", "bizim", "bu", "bunun", "bunu",
+    "bunu", "her", "herhangi", "hem", "hep", 
+    "için", "işte", "kadar", "karşı", "kendi",
+    "kendine", "ki", "mı", "mi", "çok",
+    "çünkü", "de", "den", "daha", "diğer",
+    "ile", "ilgili", "çok", "gibi", "hem",
+    "henüz", "hep", "herhangi", "hiç", "iç",
+    "şu", "şu", "şöyle", "tüm", "tümü",
+    "ya", "yani", "yok", "ve","veya","üzere",
 ]
 
 nltk.download("stopwords")
@@ -90,7 +37,7 @@ lemmatizer = WordNetLemmatizer()
 
 food_related_words = []
 try:
-    with open(r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\utils\nlpWords.txt", "r", encoding="utf-8") as file:
+    with open(r"SuperFoodAI-new/AI/utils/nlpWords.txt", "r", encoding="utf-8") as file:
         food_related_words = [line.strip().lower() for line in file if line.strip()]
 except FileNotFoundError:
     print("Hata: 'nlpWords.txt' dosyası bulunamadı.")
@@ -205,7 +152,7 @@ def get_recommendations(user_id: int, ingredients: str):
     # Calculate BMI
     bmi = calculate_bmi(weight, height)
     print(f"BMI: {bmi}")
-    file_path = r"C:\Users\casper\Desktop\4th Grade - Fall\Graduation Project 1\project\SuperFoodAI-new\AI\api\recipes.csv"
+    file_path = r"/SuperFoodAI-new/AI/api/recipes.csv"
     if os.path.exists(file_path):
         recipedf = pd.read_csv(file_path, encoding="utf-8")
 
