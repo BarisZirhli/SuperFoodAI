@@ -16,11 +16,11 @@
   </div>
 </div>
 <hr/>
-<h1>SuperfoodAI 🍴🤖</h1>
-    <p>SuperfoodAI is an AI-powered recipe recommendation system. It generates healthy and creative recipe ideas based on the ingredients you have or prompts you define. Users can create menus from suggested recipes, add favorites, and even share their selections.</p>
+<h1>SuperFoodAI 🍴🤖</h1>
+    <p>SuperFoodAI is an AI-powered recipe recommendation system. It generates healthy and creative recipe ideas based on the ingredients you have or prompts you define. Users can create menus from suggested recipes, add favorites, and even share their selections.</p>
     <hr>
     <h2>🚀 About the Project</h2>
-    <p>SuperfoodAI aims to promote healthy and sustainable eating habits by leveraging artificial intelligence.</p>
+    <p>SuperFoodAI aims to promote healthy and sustainable eating habits by leveraging artificial intelligence.</p>
     <ul>
         <li><strong>AI-Powered Suggestions:</strong> Get recipe ideas tailored to your input.</li>
         <li><strong>Favorites & Menus:</strong> Save your favorite recipes or organize them into menus.</li>
@@ -36,7 +36,7 @@
     </ul>
     <hr>
     <h2>📂 Project Structure</h2>
-    <p>SuperfoodAI consists of three main modules:</p>
+    <p>SuperFoodAI consists of three main modules:</p>
     <ol>
         <li><strong>Client:</strong>
             <ul>
