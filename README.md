@@ -1,6 +1,5 @@
   <div align="center">
   <img src="https://github.com/user-attachments/assets/d2eb3508-241c-43f4-9bf9-0685fe226d8f" width="600"/>
-  </div>
   <div>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="40"/>
