@@ -1,5 +1,6 @@
   <div align="center">
-  <img src="https://github.com/user-attachments/assets/6e8fc2a3-f2f7-4718-bb37-13ba7a9e50ed" width="600"/>
+  <img src="https://github.com/user-attachments/assets/d2eb3508-241c-43f4-9bf9-0685fe226d8f" width="600"/>
+  </div>
   <div>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="40"/>
@@ -92,7 +93,7 @@
     </ul>
     <hr>
     <h2>📸 Screenshots</h2>
-    <img src="https://github.com/user-attachments/assets/585406e7-d84f-412f-a14a-475065fd6e54"/>
+    <img src="https://github.com/user-attachments/assets/bb51dcff-f427-45bd-9f3f-a7800e16a18e"/>
     <img src="https://github.com/user-attachments/assets/c509aae6-b4dd-4fe7-b24b-9ea29eecadff"/>
     <img src="https://github.com/user-attachments/assets/0e858b08-5cfe-49d5-aa56-de6fb3358226"/>
     <img src="https://github.com/user-attachments/assets/301c732b-93b8-4559-b061-e3dcb9ffe755"/>
