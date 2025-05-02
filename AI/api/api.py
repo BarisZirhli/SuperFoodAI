@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi import FastAPI, HTTPException
 import nltk
+import uvicorn
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import string
@@ -303,6 +304,4 @@ def get_recommendations(user_id: int, ingredients: str):
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
